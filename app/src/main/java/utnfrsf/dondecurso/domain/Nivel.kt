@@ -19,6 +19,10 @@ class Nivel(@SerializedName("id")
         return this
     }
 
+    override fun toString(): String {
+        return nombre
+    }
+
     companion object {
         private const val serialVersionUID = -2410057161709898979L
     }

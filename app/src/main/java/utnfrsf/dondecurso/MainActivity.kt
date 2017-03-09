@@ -38,8 +38,8 @@ class MainActivity : AppCompatActivity() {
 
         initData()
 
-        val adapterCarrera = ArrayAdapter<Carrera>(this, android.R.layout.simple_spinner_item, carreras)
-        val adapterNivel = ArrayAdapter<Nivel>(this, android.R.layout.simple_spinner_item, niveles)
+        val adapterCarrera = ArrayAdapter<Carrera>(this, android.R.layout.simple_spinner_dropdown_item, carreras)
+        val adapterNivel = ArrayAdapter<Nivel>(this, android.R.layout.simple_spinner_dropdown_item, niveles)
         // var adapterMateria = ArrayAdapter<Materia>(this, android.R.layout.simple_spinner_item, materias)
 
 

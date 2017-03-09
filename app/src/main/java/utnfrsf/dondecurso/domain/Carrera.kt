@@ -20,7 +20,7 @@ class Carrera(@SerializedName("id")
     }
 
     override fun toString(): String {
-        return nombre;
+        return nombre
     }
 
     companion object {

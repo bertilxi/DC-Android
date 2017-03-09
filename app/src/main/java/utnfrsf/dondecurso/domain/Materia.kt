@@ -48,7 +48,7 @@ class Materia : Serializable {
     }
 
     override fun toString(): String {
-        return nombre.toString()
+        return nombre!!
     }
 
     companion object {

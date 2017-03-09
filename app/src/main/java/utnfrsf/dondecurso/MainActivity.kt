@@ -2,7 +2,6 @@ package utnfrsf.dondecurso
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -31,6 +30,11 @@ class MainActivity : AppCompatActivity() {
     var comisiones: ArrayList<Comision> = ArrayList<Comision>()
     var filteredMaterias: ArrayList<Materia> = ArrayList<Materia>()
 
+
+    var adapterMateria: ArrayAdapter<Materia>? = null
+
+    var spinnerMateria: Spinner? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
         val spinnerCarerra = findViewById(R.id.spinner_carrera) as Spinner
         val spinnerNivel = findViewById(R.id.spinner_nivel) as Spinner
-        val spinnerMateria = findViewById(R.id.spinner_materia) as Spinner
+        spinnerMateria = findViewById(R.id.spinner_materia) as Spinner
 
         initData()
 
@@ -48,47 +52,25 @@ class MainActivity : AppCompatActivity() {
         spinnerCarerra.adapter = adapterCarrera
         spinnerNivel.adapter = adapterNivel
 
-        spinnerCarerra.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
+        spinnerCarerra.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 carrera = carreras.get(position)
                 processSubjectsLoad()
             }
 
-        })
+        }
 
-        spinnerNivel.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
+        spinnerNivel.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 nivel = niveles.get(position)
                 processSubjectsLoad()
             }
 
-        })
-
-        var adapterMateria = ArrayAdapter<Materia>(this, android.R.layout.simple_spinner_item, filteredMaterias)
-
-        spinnerMateria.adapter = adapterMateria
-
-        spinnerMateria.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                materia = filteredMaterias.get(position)
-                adapterMateria = ArrayAdapter<Materia>(view?.context, android.R.layout.simple_spinner_item, filteredMaterias)
-                var mView = view as Spinner
-                mView.adapter = adapterMateria
-            }
-
-        })
+        }
 
         apiService = Api().service
 
@@ -108,14 +90,13 @@ class MainActivity : AppCompatActivity() {
 
     fun processSubjectsLoad() {
         filteredMaterias = materias
-        filteredMaterias.filter {
-            it.idCarrera == carrera?.id
-            it.nivel == nivel?.id
-        }
-        Log.v("mat", filteredMaterias.toString())
+        filteredMaterias.filter { it.idCarrera == carrera?.id }.filter { it.nivel == nivel?.id }.sortedBy { it.idCarrera }
+        adapterMateria = ArrayAdapter<Materia>(this, android.R.layout.simple_spinner_dropdown_item, filteredMaterias)
+        spinnerMateria?.adapter = adapterMateria
     }
 
     fun initData() {
+
         carreras.add(Carrera(1, "Ingeniería en Sistemas"))
         carreras.add(Carrera(2, "Ingeniería Industrial"))
         carreras.add(Carrera(5, "Ingeniería Eléctrica"))

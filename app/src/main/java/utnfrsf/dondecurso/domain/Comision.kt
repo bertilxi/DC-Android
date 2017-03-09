@@ -23,6 +23,10 @@ class Comision : Serializable {
         return this
     }
 
+    override fun toString(): String {
+        return nombre.toString()
+    }
+
     companion object {
         private const val serialVersionUID = 5011134580201116098L
     }

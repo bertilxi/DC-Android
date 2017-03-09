@@ -47,6 +47,10 @@ class Materia : Serializable {
         return this
     }
 
+    override fun toString(): String {
+        return nombre.toString()
+    }
+
     companion object {
         private const val serialVersionUID = -3380047840208817455L
     }

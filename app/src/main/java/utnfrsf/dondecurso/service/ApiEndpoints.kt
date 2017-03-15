@@ -5,15 +5,11 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
-import utnfrsf.dondecurso.domain.Materia
 
 interface ApiEndpoints {
 
-    @GET("materias")
-    fun loadSubjects(): Call<List<Materia>>
-
     @GET("getMaterias.php")
-    fun loadSubjects2(): Call<LinkedTreeMap<String, Any>>
+    fun loadSubjects(): Call<LinkedTreeMap<String, Any>>
 
     @POST("getDistribucion.php")
     fun requestDistribution(@Query("fecha_inicio") fechaInicio: String,

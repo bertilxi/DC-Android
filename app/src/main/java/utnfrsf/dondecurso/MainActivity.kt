@@ -64,12 +64,10 @@ class MainActivity : AppCompatActivity() {
 
         spinnerNivel.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
-
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 nivel = niveles.get(position)
                 processSubjectsLoad()
             }
-
         }
 
         apiService.loadSubjects2().enqueue(object : Callback<LinkedTreeMap<String, Any>> {
@@ -83,15 +81,18 @@ class MainActivity : AppCompatActivity() {
             override fun onFailure(call: Call<LinkedTreeMap<String, Any>>?, t: Throwable?) {
                 throw t!!
             }
-
         })
-
-
     }
 
     fun processSubjectsLoad() {
-        filteredMaterias = materias
-        filteredMaterias.filter { it.idCarrera == carrera?.id }.filter { it.nivel == nivel?.id }.sortedBy { it.idCarrera }
+        if (carrera == null || nivel == null) {
+            return
+        }
+        filteredMaterias = ArrayList()
+        materias.asSequence()
+                .filter { it.idCarrera == carrera?.id && it.nivel == nivel?.id }
+                .forEach { filteredMaterias.add(it) }
+
         adapterMateria = ArrayAdapter<Materia>(this, android.R.layout.simple_spinner_dropdown_item, filteredMaterias)
         spinnerMateria?.adapter = adapterMateria
     }
@@ -138,8 +139,8 @@ class MainActivity : AppCompatActivity() {
             materia.idCarrera = Math.round(idCarrera).toInt()
             materia.nivel = Math.round(nivel).toInt()
             val comisiones = ArrayList<Comision>()
-            for (comKey in comisionesMap.keys){
-                if(!objects.contains(comKey)){
+            for (comKey in comisionesMap.keys) {
+                if (!objects.contains(comKey)) {
                     break
                 }
                 val comisionNode: LinkedTreeMap<String, Any> = objects.getValue(comKey) as LinkedTreeMap<String, Any>

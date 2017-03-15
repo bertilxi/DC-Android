@@ -6,6 +6,8 @@ import java.io.Serializable
 
 class Materia : Serializable {
 
+    private val serialVersionUID = -3380047840208817455L
+
     @SerializedName("id")
     @Expose
     var id: Int? = null
@@ -22,37 +24,8 @@ class Materia : Serializable {
     @Expose
     var nivel: Int? = null
 
-    fun withId(id: Int?): Materia {
-        this.id = id
-        return this
-    }
-
-    fun withIdCarrera(idCarrera: Int?): Materia {
-        this.idCarrera = idCarrera
-        return this
-    }
-
-    fun withComisions(Comisions: List<Comision>): Materia {
-        this.Comisiones = Comisions
-        return this
-    }
-
-    fun withNombre(nombre: String): Materia {
-        this.nombre = nombre
-        return this
-    }
-
-    fun withNivel(nivel: Int): Materia {
-        this.nivel = nivel
-        return this
-    }
-
     override fun toString(): String {
         return nombre!!
-    }
-
-    companion object {
-        private const val serialVersionUID = -3380047840208817455L
     }
 
 }

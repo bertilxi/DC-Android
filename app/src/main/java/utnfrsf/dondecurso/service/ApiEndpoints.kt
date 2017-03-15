@@ -1,5 +1,6 @@
 package utnfrsf.dondecurso.service
 
+import com.google.gson.internal.LinkedTreeMap
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -10,6 +11,9 @@ interface ApiEndpoints {
 
     @GET("materias")
     fun loadSubjects(): Call<List<Materia>>
+
+    @GET("getMaterias.php")
+    fun loadSubjects2(): Call<LinkedTreeMap<String, Any>>
 
     @POST("getDistribucion.php")
     fun requestDistribution(@Query("fecha_inicio") fechaInicio: String,

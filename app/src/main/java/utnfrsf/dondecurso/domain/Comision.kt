@@ -6,6 +6,8 @@ import java.io.Serializable
 
 class Comision : Serializable {
 
+    private val serialVersionUID = 5011134580201116098L
+
     @SerializedName("id")
     @Expose
     var id: Int? = null
@@ -13,22 +15,8 @@ class Comision : Serializable {
     @Expose
     var nombre: String? = null
 
-    fun withId(id: Int?): Comision {
-        this.id = id
-        return this
-    }
-
-    fun withNombre(nombre: String): Comision {
-        this.nombre = nombre
-        return this
-    }
-
     override fun toString(): String {
         return nombre.toString()
-    }
-
-    companion object {
-        private const val serialVersionUID = 5011134580201116098L
     }
 
 }

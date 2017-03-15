@@ -2,10 +2,12 @@ package utnfrsf.dondecurso
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import com.google.gson.internal.LinkedTreeMap
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -16,9 +18,10 @@ import utnfrsf.dondecurso.domain.Nivel
 import utnfrsf.dondecurso.service.Api
 import utnfrsf.dondecurso.service.ApiEndpoints
 
+
 class MainActivity : AppCompatActivity() {
 
-    var apiService: ApiEndpoints? = null
+    var apiService: ApiEndpoints = Api().service
     var materias: ArrayList<Materia> = ArrayList<Materia>()
     var carreras: ArrayList<Carrera> = ArrayList<Carrera>()
     var niveles: ArrayList<Nivel> = ArrayList<Nivel>()
@@ -30,15 +33,12 @@ class MainActivity : AppCompatActivity() {
     var comisiones: ArrayList<Comision> = ArrayList<Comision>()
     var filteredMaterias: ArrayList<Materia> = ArrayList<Materia>()
 
-
     var adapterMateria: ArrayAdapter<Materia>? = null
-
     var spinnerMateria: Spinner? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
         val spinnerCarerra = findViewById(R.id.spinner_carrera) as Spinner
         val spinnerNivel = findViewById(R.id.spinner_nivel) as Spinner
@@ -72,19 +72,20 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        apiService = Api().service
+        apiService.loadSubjects2().enqueue(object : Callback<LinkedTreeMap<String, Any>> {
+            override fun onResponse(call: Call<LinkedTreeMap<String, Any>>?, response: Response<LinkedTreeMap<String, Any>>?) {
+                val mMaterias = response?.body() as LinkedTreeMap<String, Any>
+                materias = fromJson(mMaterias)
 
-        apiService!!.loadSubjects().enqueue(object : Callback<List<Materia>> {
-            override fun onResponse(call: Call<List<Materia>>?, response: Response<List<Materia>>?) {
-                materias = response?.body() as ArrayList<Materia>
                 processSubjectsLoad()
             }
 
-            override fun onFailure(call: Call<List<Materia>>?, t: Throwable?) {
+            override fun onFailure(call: Call<LinkedTreeMap<String, Any>>?, t: Throwable?) {
                 throw t!!
             }
 
         })
+
 
     }
 
@@ -114,6 +115,44 @@ class MainActivity : AppCompatActivity() {
         niveles.add(Nivel(6, "Nivel 6"))
         niveles.add(Nivel(7, "No Corresponde"))
 
+    }
+
+    fun fromJson(objects: LinkedTreeMap<String, Any>): ArrayList<Materia> {
+        var mMaterias: ArrayList<Materia> = ArrayList()
+
+        Log.v("keys", objects.keys.toString())
+
+        for (key in objects.keys) {
+            objects.get(key)
+            val materiaNode: LinkedTreeMap<String, Any> = objects.getValue(key) as LinkedTreeMap<String, Any>
+
+            val id: Double = materiaNode.getValue("id") as Double
+            val idCarrera: Double = materiaNode.getValue("id_carrera") as Double
+            val comisionesMap: LinkedTreeMap<String, Double> = materiaNode.getValue("comisiones") as LinkedTreeMap<String, Double>
+            val nombre: Any = materiaNode.getValue("nombre")
+            val nivel: Double = materiaNode.getValue("nivel") as Double
+
+            val materia = Materia()
+            materia.nombre = nombre.toString()
+            materia.id = Math.round(id).toInt()
+            materia.idCarrera = Math.round(idCarrera).toInt()
+            materia.nivel = Math.round(nivel).toInt()
+            val comisiones = ArrayList<Comision>()
+            for (comKey in comisionesMap.keys){
+                if(!objects.contains(comKey)){
+                    break
+                }
+                val comisionNode: LinkedTreeMap<String, Any> = objects.getValue(comKey) as LinkedTreeMap<String, Any>
+                val comID: Double = comisionNode.getValue("id") as Double
+                val comNombre: Any = comisionNode.getValue("nombre")
+                val comision: Comision = Comision()
+                comision.id = Math.round(comID).toInt()
+                comision.nombre = comNombre.toString()
+                comisiones.add(comision)
+            }
+            mMaterias.add(materia)
+        }
+        return mMaterias
     }
 
 }

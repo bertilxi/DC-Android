@@ -9,22 +9,9 @@ class Carrera(@SerializedName("id")
               @SerializedName("nombre")
               @Expose var nombre: String) : Serializable {
 
-    fun withId(id: Int): Carrera {
-        this.id = id
-        return this
-    }
-
-    fun withNombre(nombre: String): Carrera {
-        this.nombre = nombre
-        return this
-    }
+    private val serialVersionUID = -1836502662250495382L
 
     override fun toString(): String {
         return nombre
     }
-
-    companion object {
-        private const val serialVersionUID = -1836502662250495382L
-    }
-
 }

@@ -9,22 +9,10 @@ class Nivel(@SerializedName("id")
             @SerializedName("nombre")
             @Expose var nombre: String) : Serializable {
 
-    fun withId(id: Int): Nivel {
-        this.id = id
-        return this
-    }
-
-    fun withNombre(nombre: String): Nivel {
-        this.nombre = nombre
-        return this
-    }
+    private val serialVersionUID = -2410057161709898979L
 
     override fun toString(): String {
         return nombre
-    }
-
-    companion object {
-        private const val serialVersionUID = -2410057161709898979L
     }
 
 }

@@ -17,21 +17,26 @@ import utnfrsf.dondecurso.domain.Materia
 import utnfrsf.dondecurso.domain.Nivel
 import utnfrsf.dondecurso.service.Api
 import utnfrsf.dondecurso.service.ApiEndpoints
+import android.app.DatePickerDialog
+import android.text.format.DateUtils
+import android.widget.TextView
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
 
     var apiService: ApiEndpoints = Api().service
-    var materias: ArrayList<Materia> = ArrayList<Materia>()
-    var carreras: ArrayList<Carrera> = ArrayList<Carrera>()
-    var niveles: ArrayList<Nivel> = ArrayList<Nivel>()
+    var materias: ArrayList<Materia> = ArrayList()
+    var carreras: ArrayList<Carrera> = ArrayList()
+    var niveles: ArrayList<Nivel> = ArrayList()
 
     var carrera: Carrera? = null
     var nivel: Nivel? = null
     var materia: Materia? = null
 
-    var comisiones: ArrayList<Comision> = ArrayList<Comision>()
-    var filteredMaterias: ArrayList<Materia> = ArrayList<Materia>()
+    var comisiones: ArrayList<Comision> = ArrayList()
+    var filteredMaterias: ArrayList<Materia> = ArrayList()
 
     var adapterMateria: ArrayAdapter<Materia>? = null
     var spinnerMateria: Spinner? = null
@@ -42,6 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         val spinnerCarerra = findViewById(R.id.spinner_carrera) as Spinner
         val spinnerNivel = findViewById(R.id.spinner_nivel) as Spinner
+        val textViewFecha = findViewById(R.id.textViewFecha) as TextView
         spinnerMateria = findViewById(R.id.spinner_materia) as Spinner
 
         initData()
@@ -56,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                carrera = carreras.get(position)
+                carrera = carreras[position]
                 processSubjectsLoad()
             }
         }
@@ -72,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         spinnerNivel.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                nivel = niveles.get(position)
+                nivel = niveles[position]
                 processSubjectsLoad()
             }
         }
@@ -88,6 +94,22 @@ class MainActivity : AppCompatActivity() {
                 throw t!!
             }
         })
+
+        val myFormat = "dd MMMM yyyy"
+        val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
+        val myCalendar = Calendar.getInstance()
+
+        textViewFecha.setOnClickListener({
+            val date = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                myCalendar.set(Calendar.YEAR, year)
+                myCalendar.set(Calendar.MONTH, monthOfYear)
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                textViewFecha.text = sdf.format(myCalendar.time)
+            }
+            DatePickerDialog(this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show()
+        })
+        textViewFecha.text = sdf.format(myCalendar.time)
     }
 
     fun processSubjectsLoad() {

@@ -11,6 +11,7 @@ import utnfrsf.dondecurso.common.fromJson
 import utnfrsf.dondecurso.service.Api
 import utnfrsf.dondecurso.service.ApiEndpoints
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.util.Log
 import android.widget.*
 import utnfrsf.dondecurso.domain.*
@@ -53,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         val adapterNivel = ArrayAdapter<Nivel>(this, android.R.layout.simple_spinner_dropdown_item, niveles)
         val adapterComision = ArrayAdapter<Comision>(this, android.R.layout.simple_spinner_dropdown_item, comisiones)
         adapterMateria = ArrayAdapter<Materia>(this, android.R.layout.simple_spinner_dropdown_item, filteredMaterias)
-        
+
         spinnerMateria.adapter = adapterMateria
         spinnerCarerra.adapter = adapterCarrera
         spinnerNivel.adapter = adapterNivel
@@ -73,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 materia = filteredMaterias[position]
-                Log.d("APP", materia.toString() + " " + materia?.comisiones.toString())
+                //Log.d("APP", materia.toString() + " " + materia?.comisiones.toString())
                 comisiones.clear()
                 comisiones.addAll(materia!!.comisiones!!)
                 adapterComision.notifyDataSetChanged()
@@ -129,9 +130,9 @@ class MainActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<String>?, response: Response<String>?) {
                     val mReservas = response?.body() as String
                     reservas = fromJson(mReservas)
-                    for(r in reservas){
-                        Log.d("APP", r.toString())
-                    }
+                    val i = Intent(this@MainActivity, ReservasActivity::class.java)
+                    i.putExtra("reservas", reservas)
+                    startActivity(i)
                 }
 
                 override fun onFailure(call: Call<String>?, t: Throwable?) {

@@ -1,13 +1,11 @@
 package utnfrsf.dondecurso.domain
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
 
-class Reserva: Serializable{
-    @SerializedName("id_carrera")
-    @Expose
-    var id_carrera: Int? = 0
+class Reserva: Parcelable{
     @SerializedName("nombre")
     @Expose
     var nombre: String? = null
@@ -21,9 +19,38 @@ class Reserva: Serializable{
     @Expose
     var horario: String? = null
 
-    //private val serialVersionUID = -1836502662250495382L
-
     override fun toString(): String {
         return nombre!!
+    }
+    companion object {
+        @JvmField val CREATOR: Parcelable.Creator<Reserva> = object : Parcelable.Creator<Reserva> {
+            override fun createFromParcel(source: Parcel): Reserva{
+                return Reserva(source)
+            }
+
+            override fun newArray(size: Int): Array<Reserva?> {
+                return arrayOfNulls(size)
+            }
+        }
+    }
+
+    constructor(input: Parcel){
+        nombre = input.readString()
+        aula = input.readString()
+        comision = input.readString()
+        horario = input.readString()
+    }
+
+    constructor()
+
+    override fun writeToParcel(dest: Parcel?, flags: Int) {
+        dest!!.writeString(nombre)
+        dest.writeString(aula)
+        dest.writeString(comision)
+        dest.writeString(horario)
+    }
+
+    override fun describeContents(): Int {
+        return 0
     }
 }

@@ -14,9 +14,9 @@ class Materia : Serializable {
     @SerializedName("id_carrera")
     @Expose
     var idCarrera: Int? = null
-    @SerializedName("Comisiones")
+    @SerializedName("comisiones")
     @Expose
-    var Comisiones: List<Comision>? = null
+    var comisiones: ArrayList<Comision>? = null
     @SerializedName("nombre")
     @Expose
     var nombre: String? = null

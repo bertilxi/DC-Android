@@ -29,12 +29,12 @@ class MainActivity : AppCompatActivity() {
     var carrera: Carrera? = null
     var nivel: Nivel? = null
     var materia: Materia? = null
+    var comision: Comision? = null
 
     var comisiones: ArrayList<Comision> = ArrayList()
     var filteredMaterias: ArrayList<Materia> = ArrayList()
 
     var adapterMateria: ArrayAdapter<Materia>? = null
-    var spinnerMateria: Spinner? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,17 +42,22 @@ class MainActivity : AppCompatActivity() {
 
         val spinnerCarerra = findViewById(R.id.spinner_carrera) as Spinner
         val spinnerNivel = findViewById(R.id.spinner_nivel) as Spinner
+        val spinnerComision = findViewById(R.id.spinner_comision) as Spinner
         val textViewFecha = findViewById(R.id.textViewFecha) as TextView
-        spinnerMateria = findViewById(R.id.spinner_materia) as Spinner
+        val spinnerMateria = findViewById(R.id.spinner_materia) as Spinner
         val buttonBuscar = findViewById(R.id.buttonBuscar) as Button
 
         initData()
 
         val adapterCarrera = ArrayAdapter<Carrera>(this, android.R.layout.simple_spinner_dropdown_item, carreras)
         val adapterNivel = ArrayAdapter<Nivel>(this, android.R.layout.simple_spinner_dropdown_item, niveles)
-
+        val adapterComision = ArrayAdapter<Comision>(this, android.R.layout.simple_spinner_dropdown_item, comisiones)
+        adapterMateria = ArrayAdapter<Materia>(this, android.R.layout.simple_spinner_dropdown_item, filteredMaterias)
+        
+        spinnerMateria.adapter = adapterMateria
         spinnerCarerra.adapter = adapterCarrera
         spinnerNivel.adapter = adapterNivel
+        spinnerComision.adapter = adapterComision
 
         spinnerCarerra.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -63,11 +68,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        spinnerMateria!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spinnerMateria.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                materia = materias[position]
+                materia = filteredMaterias[position]
+                Log.d("APP", materia.toString() + " " + materia?.comisiones.toString())
+                comisiones.clear()
+                comisiones.addAll(materia!!.comisiones!!)
+                adapterComision.notifyDataSetChanged()
             }
         }
 
@@ -76,6 +85,13 @@ class MainActivity : AppCompatActivity() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 nivel = niveles[position]
                 processSubjectsLoad()
+            }
+        }
+
+        spinnerComision.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                comision = comisiones[position]
             }
         }
 
@@ -126,16 +142,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun processSubjectsLoad() {
-        if (carrera == null || nivel == null) {
-            return
+        filteredMaterias.clear()
+        if (carrera != null && nivel != null) {
+            materias.asSequence()
+                    .filter { it.idCarrera == carrera?.id && it.nivel == nivel?.id }
+                    .forEach { filteredMaterias.add(it) }
         }
-        filteredMaterias = ArrayList()
-        materias.asSequence()
-                .filter { it.idCarrera == carrera?.id && it.nivel == nivel?.id }
-                .forEach { filteredMaterias.add(it) }
-
-        adapterMateria = ArrayAdapter<Materia>(this, android.R.layout.simple_spinner_dropdown_item, filteredMaterias)
-        spinnerMateria?.adapter = adapterMateria
+        adapterMateria?.notifyDataSetChanged()
+        return
     }
 
     fun initData() {

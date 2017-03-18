@@ -27,19 +27,17 @@ fun fromJson(objects: LinkedTreeMap<String, Any>): ArrayList<Materia> {
         materia.id = Math.round(id).toInt()
         materia.idCarrera = Math.round(idCarrera).toInt()
         materia.nivel = Math.round(nivel).toInt()
-        val comisiones = ArrayList<Comision>()
+        materia.comisiones = ArrayList<Comision>()
         for (comKey in comisionesMap.keys) {
-            if (!objects.contains(comKey)) {
-                break
-            }
-            val comisionNode: LinkedTreeMap<String, Any> = objects.getValue(comKey) as LinkedTreeMap<String, Any>
+            val comisionNode: LinkedTreeMap<String, Any> = comisionesMap.getValue(comKey) as LinkedTreeMap<String, Any>
             val comID: Double = comisionNode.getValue("id") as Double
             val comNombre: Any = comisionNode.getValue("nombre")
             val comision: Comision = Comision()
             comision.id = Math.round(comID).toInt()
             comision.nombre = comNombre.toString()
-            comisiones.add(comision)
+            materia.comisiones!!.add(comision)
         }
+        //Log.d("APP", materia.toString() + " " + materia.idCarrera + " " + materia.comisiones)
         mMaterias.add(materia)
     }
     return mMaterias

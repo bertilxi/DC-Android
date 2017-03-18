@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Donde Curso</string>
+    <string name="button_buscar">Buscar</string>
 </resources>

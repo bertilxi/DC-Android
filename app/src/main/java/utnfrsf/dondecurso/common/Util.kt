@@ -2,8 +2,10 @@ package utnfrsf.dondecurso.common
 
 import android.util.Log
 import com.google.gson.internal.LinkedTreeMap
+import org.jsoup.Jsoup
 import utnfrsf.dondecurso.domain.Comision
 import utnfrsf.dondecurso.domain.Materia
+import utnfrsf.dondecurso.domain.Reserva
 
 fun fromJson(objects: LinkedTreeMap<String, Any>): ArrayList<Materia> {
     val mMaterias: ArrayList<Materia> = ArrayList()
@@ -41,4 +43,31 @@ fun fromJson(objects: LinkedTreeMap<String, Any>): ArrayList<Materia> {
         mMaterias.add(materia)
     }
     return mMaterias
+}
+
+fun fromJson(objects: String): ArrayList<Reserva> {
+    val mReservas: ArrayList<Reserva> = ArrayList()
+
+    val doc = Jsoup.parse(objects)
+    val tablas = doc.getElementsByTag("table")
+    if(tablas.isNotEmpty()){
+        val tablaReservas = tablas[0]
+        if(tablas.size >= 2){
+            val tablaReservasEspeciales = tablas[1]
+        }
+        val filas = tablaReservas.getElementsByTag("tr")
+        filas.removeAt(0)
+
+        for(f in filas){
+            val columnas = f.getElementsByTag("td")
+            val mReserva = Reserva()
+            mReserva.comision = columnas[0].text()
+            mReserva.horario = columnas[1].text()
+            mReserva.nombre = columnas[2].text()
+            mReserva.aula = columnas[3].text()
+            mReservas.add(mReserva)
+        }
+    }
+
+    return mReservas
 }

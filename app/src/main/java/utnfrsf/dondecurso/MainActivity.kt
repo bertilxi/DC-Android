@@ -3,23 +3,17 @@ package utnfrsf.dondecurso
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
 import com.google.gson.internal.LinkedTreeMap
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import utnfrsf.dondecurso.common.fromJson
-import utnfrsf.dondecurso.domain.Carrera
-import utnfrsf.dondecurso.domain.Comision
-import utnfrsf.dondecurso.domain.Materia
-import utnfrsf.dondecurso.domain.Nivel
 import utnfrsf.dondecurso.service.Api
 import utnfrsf.dondecurso.service.ApiEndpoints
 import android.app.DatePickerDialog
-import android.text.format.DateUtils
-import android.widget.TextView
+import android.util.Log
+import android.widget.*
+import utnfrsf.dondecurso.domain.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     var materias: ArrayList<Materia> = ArrayList()
     var carreras: ArrayList<Carrera> = ArrayList()
     var niveles: ArrayList<Nivel> = ArrayList()
+    var reservas: ArrayList<Reserva> = ArrayList()
 
     var carrera: Carrera? = null
     var nivel: Nivel? = null
@@ -49,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         val spinnerNivel = findViewById(R.id.spinner_nivel) as Spinner
         val textViewFecha = findViewById(R.id.textViewFecha) as TextView
         spinnerMateria = findViewById(R.id.spinner_materia) as Spinner
+        val buttonBuscar = findViewById(R.id.buttonBuscar) as Button
 
         initData()
 
@@ -110,6 +106,23 @@ class MainActivity : AppCompatActivity() {
             DatePickerDialog(this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show()
         })
         textViewFecha.text = sdf.format(myCalendar.time)
+
+        buttonBuscar.setOnClickListener({
+            apiService.requestDistribution(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time),
+                    carrera?.id.toString(), nivel?.id.toString(), materia?.id.toString(), "null").enqueue(object : Callback<String> {
+                override fun onResponse(call: Call<String>?, response: Response<String>?) {
+                    val mReservas = response?.body() as String
+                    reservas = fromJson(mReservas)
+                    for(r in reservas){
+                        Log.d("APP", r.toString())
+                    }
+                }
+
+                override fun onFailure(call: Call<String>?, t: Throwable?) {
+                    throw t!!
+                }
+            })
+        })
     }
 
     fun processSubjectsLoad() {

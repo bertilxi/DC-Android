@@ -2,4 +2,9 @@
     <string name="app_name">Donde Curso</string>
     <string name="button_buscar">Buscar</string>
     <string name="button_nueva_consulta">Nueva Consulta</string>
+    <string name="carrera">Carrera</string>
+    <string name="comisión">Comisión</string>
+    <string name="fecha">Fecha</string>
+    <string name="materia">Materia</string>
+    <string name="nivel">Nivel</string>
 </resources>

@@ -12,8 +12,8 @@ import utnfrsf.dondecurso.service.Api
 import utnfrsf.dondecurso.service.ApiEndpoints
 import android.app.DatePickerDialog
 import android.content.Intent
-import android.util.Log
 import android.widget.*
+import utnfrsf.dondecurso.adapter.MyArrayAdapter
 import utnfrsf.dondecurso.domain.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     var comisiones: ArrayList<Comision> = ArrayList()
     var filteredMaterias: ArrayList<Materia> = ArrayList()
 
-    var adapterMateria: ArrayAdapter<Materia>? = null
+    var adapterMateria: MyArrayAdapter<Materia>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,10 +50,10 @@ class MainActivity : AppCompatActivity() {
 
         initData()
 
-        val adapterCarrera = ArrayAdapter<Carrera>(this, android.R.layout.simple_spinner_dropdown_item, carreras)
-        val adapterNivel = ArrayAdapter<Nivel>(this, android.R.layout.simple_spinner_dropdown_item, niveles)
-        val adapterComision = ArrayAdapter<Comision>(this, android.R.layout.simple_spinner_dropdown_item, comisiones)
-        adapterMateria = ArrayAdapter<Materia>(this, android.R.layout.simple_spinner_dropdown_item, filteredMaterias)
+        val adapterCarrera = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, carreras, false)
+        val adapterNivel = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, niveles, false)
+        val adapterComision = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, comisiones, true)
+        adapterMateria = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, filteredMaterias, true)
 
         spinnerMateria.adapter = adapterMateria
         spinnerCarerra.adapter = adapterCarrera
@@ -74,9 +74,11 @@ class MainActivity : AppCompatActivity() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 materia = filteredMaterias[position]
-                //Log.d("APP", materia.toString() + " " + materia?.comisiones.toString())
                 comisiones.clear()
                 comisiones.addAll(materia!!.comisiones!!)
+                if(comisiones.size != 1){
+                    comisiones.add(0, Comision(0, "Todas"))
+                }
                 adapterComision.notifyDataSetChanged()
             }
         }
@@ -126,7 +128,10 @@ class MainActivity : AppCompatActivity() {
 
         buttonBuscar.setOnClickListener({
             apiService.requestDistribution(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time),
-                    carrera?.id.toString(), nivel?.id.toString(), materia?.id.toString(), "null").enqueue(object : Callback<String> {
+                    carrera?.id.toString(),
+                    nivel?.id.toString(),
+                    materia?.id.toString(),
+                    comision?.id.toString()).enqueue(object : Callback<String> {
                 override fun onResponse(call: Call<String>?, response: Response<String>?) {
                     val mReservas = response?.body() as String
                     reservas = fromJson(mReservas)
@@ -149,12 +154,15 @@ class MainActivity : AppCompatActivity() {
                     .filter { it.idCarrera == carrera?.id && it.nivel == nivel?.id }
                     .forEach { filteredMaterias.add(it) }
         }
+        if(filteredMaterias.size != 1){
+            filteredMaterias.add(0, Materia(0, "Todas"))
+        }
         adapterMateria?.notifyDataSetChanged()
         return
     }
 
     fun initData() {
-
+        carreras.add(Carrera(0, "Seleccione una carrera"))
         carreras.add(Carrera(1, "Ingeniería en Sistemas"))
         carreras.add(Carrera(2, "Ingeniería Industrial"))
         carreras.add(Carrera(5, "Ingeniería Eléctrica"))
@@ -164,6 +172,7 @@ class MainActivity : AppCompatActivity() {
         carreras.add(Carrera(9, "Institucional"))
         carreras.add(Carrera(10, "Extensión Universitaria"))
 
+        niveles.add(Nivel(0, "Seleccione un nivel"))
         niveles.add(Nivel(1, "Nivel 1"))
         niveles.add(Nivel(2, "Nivel 2"))
         niveles.add(Nivel(3, "Nivel 3"))

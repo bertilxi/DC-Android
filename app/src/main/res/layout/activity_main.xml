@@ -13,7 +13,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Carrera" />
+        android:text="@string/carrera" />
 
     <Spinner
         android:id="@+id/spinner_carrera"
@@ -26,7 +26,7 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nivel" />
+        android:text="@string/nivel" />
 
     <Spinner
         android:id="@+id/spinner_nivel"
@@ -39,7 +39,7 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Materia" />
+        android:text="@string/materia" />
 
     <Spinner
         android:id="@+id/spinner_materia"
@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:text="Comisión" />
+        android:text="@string/comisión" />
 
     <Spinner
         android:id="@+id/spinner_comision"
@@ -65,7 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:text="Fecha" />
+        android:text="@string/fecha" />
 
     <TextView
         android:id="@+id/textViewFecha"

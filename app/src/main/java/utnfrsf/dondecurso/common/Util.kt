@@ -37,7 +37,6 @@ fun fromJson(objects: LinkedTreeMap<String, Any>): ArrayList<Materia> {
             comision.nombre = comNombre.toString()
             materia.comisiones!!.add(comision)
         }
-        //Log.d("APP", materia.toString() + " " + materia.idCarrera + " " + materia.comisiones)
         mMaterias.add(materia)
     }
     return mMaterias

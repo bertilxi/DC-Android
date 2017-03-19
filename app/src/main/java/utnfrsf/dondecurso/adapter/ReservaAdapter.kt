@@ -1,6 +1,5 @@
 package utnfrsf.dondecurso.adapter
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.Adapter
 import android.view.View

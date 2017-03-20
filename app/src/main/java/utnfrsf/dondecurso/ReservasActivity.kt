@@ -43,6 +43,6 @@ class ReservasActivity : AppCompatActivity() {
         recyclerViewReservasEspeciales.adapter = mAdapterReservasEspeciales
         recyclerViewReservasEspeciales.addItemDecoration(itemDecoration)
 
-        reservasEspeciales.addAll(intent.getParcelableArrayListExtra<Reserva>("reservas"))
+        reservasEspeciales.addAll(intent.getParcelableArrayListExtra<Reserva>("reservas_especiales"))
     }
 }

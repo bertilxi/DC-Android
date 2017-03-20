@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp">
@@ -45,11 +46,10 @@
         android:id="@+id/textViewAula"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="0dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginRight="-1dp"
         android:text="AULA 5"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@color/colorPrimary"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewMateria" />
+        tools:layout_editor_absoluteY="5dp" />
 </android.support.constraint.ConstraintLayout>

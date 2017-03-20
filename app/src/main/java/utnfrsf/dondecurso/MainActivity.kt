@@ -1,24 +1,26 @@
 package utnfrsf.dondecurso
 
+import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.AdapterView
+import android.widget.Button
+import android.widget.Spinner
+import android.widget.TextView
 import com.google.gson.internal.LinkedTreeMap
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import utnfrsf.dondecurso.common.fromJson
-import utnfrsf.dondecurso.service.Api
-import utnfrsf.dondecurso.service.ApiEndpoints
-import android.app.DatePickerDialog
-import android.content.Intent
-import android.widget.*
 import utnfrsf.dondecurso.adapter.MyArrayAdapter
+import utnfrsf.dondecurso.common.fromJson
 import utnfrsf.dondecurso.common.fromJsonReservasEspeciales
 import utnfrsf.dondecurso.domain.*
+import utnfrsf.dondecurso.service.Api
+import utnfrsf.dondecurso.service.ApiEndpoints
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -78,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                 materia = filteredMaterias[position]
                 comisiones.clear()
                 comisiones.addAll(materia!!.comisiones!!)
-                if(comisiones.size != 1){
+                if (comisiones.size != 1) {
                     comisiones.add(0, Comision(0, "Todas"))
                 }
                 adapterComision.notifyDataSetChanged()
@@ -158,7 +160,7 @@ class MainActivity : AppCompatActivity() {
                     .filter { it.idCarrera == carrera?.id && it.nivel == nivel?.id }
                     .forEach { filteredMaterias.add(it) }
         }
-        if(filteredMaterias.size != 1){
+        if (filteredMaterias.size != 1) {
             filteredMaterias.add(0, Materia(0, "Todas"))
         }
         adapterMateria?.notifyDataSetChanged()

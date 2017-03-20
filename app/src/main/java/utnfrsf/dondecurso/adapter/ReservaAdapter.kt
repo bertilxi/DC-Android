@@ -2,19 +2,18 @@ package utnfrsf.dondecurso.adapter
 
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.Adapter
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import utnfrsf.dondecurso.R
 import utnfrsf.dondecurso.domain.Reserva
-import java.util.ArrayList
-import android.view.LayoutInflater
+import java.util.*
 
 
-
-class ReservaAdapter(var reservas: ArrayList<Reserva>) : Adapter<ReservaAdapter.MyViewHolder>(){
+class ReservaAdapter(var reservas: ArrayList<Reserva>) : Adapter<ReservaAdapter.MyViewHolder>() {
     override fun onBindViewHolder(holder: MyViewHolder?, position: Int) {
-        val reserva : Reserva = reservas[position]
+        val reserva: Reserva = reservas[position]
         holder!!.materia!!.text = reserva.nombre
         holder.horario!!.text = reserva.horario
         holder.comision!!.text = reserva.comision
@@ -32,10 +31,10 @@ class ReservaAdapter(var reservas: ArrayList<Reserva>) : Adapter<ReservaAdapter.
     }
 
     class MyViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        var materia : TextView? = null
-        var horario : TextView? = null
-        var aula : TextView? = null
-        var comision : TextView? = null
+        var materia: TextView? = null
+        var horario: TextView? = null
+        var aula: TextView? = null
+        var comision: TextView? = null
 
         init {
             materia = itemView!!.findViewById(R.id.textViewMateria) as TextView?

@@ -5,7 +5,7 @@ import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Reserva: Parcelable{
+class Reserva : Parcelable {
     @SerializedName("nombre")
     @Expose
     var nombre: String? = null
@@ -22,9 +22,10 @@ class Reserva: Parcelable{
     override fun toString(): String {
         return nombre!!
     }
+
     companion object {
         @JvmField val CREATOR: Parcelable.Creator<Reserva> = object : Parcelable.Creator<Reserva> {
-            override fun createFromParcel(source: Parcel): Reserva{
+            override fun createFromParcel(source: Parcel): Reserva {
                 return Reserva(source)
             }
 
@@ -34,7 +35,7 @@ class Reserva: Parcelable{
         }
     }
 
-    constructor(input: Parcel){
+    constructor(input: Parcel) {
         nombre = input.readString()
         aula = input.readString()
         comision = input.readString()

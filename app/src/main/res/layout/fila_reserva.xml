@@ -11,40 +11,44 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:text="TextView"
+        android:text="ANALISIS MATEMATICO I"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.0" />
 
     <TextView
         android:id="@+id/textViewHorario"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
+        android:text="16:30 a 19:00"
         android:layout_marginTop="8dp"
-        android:text="TextView"
-        app:layout_constraintLeft_toRightOf="@+id/textViewMateria"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewAula"
+        android:layout_marginRight="7dp"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <TextView
         android:id="@+id/textViewComision"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="COMISION B"
         android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="8dp"
-        android:text="TextView"
-        app:layout_constraintLeft_toRightOf="@+id/textViewHorario"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewAula" />
 
     <TextView
         android:id="@+id/textViewAula"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="6dp"
-        android:text="TextView"
-        app:layout_constraintHorizontal_bias="0.517"
-        app:layout_constraintLeft_toRightOf="@+id/textViewComision"
+        android:layout_marginRight="7dp"
+        android:layout_marginTop="0dp"
+        android:text="AULA 5"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewMateria" />
 </android.support.constraint.ConstraintLayout>

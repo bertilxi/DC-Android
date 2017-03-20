@@ -49,9 +49,6 @@ fun fromJson(objects: String): ArrayList<Reserva> {
     val tablas = doc.getElementsByTag("table")
     if(tablas.isNotEmpty()){
         val tablaReservas = tablas[0]
-        if(tablas.size >= 2){
-            val tablaReservasEspeciales = tablas[1]
-        }
         val filas = tablaReservas.getElementsByTag("tr")
         filas.removeAt(0)
 
@@ -63,6 +60,33 @@ fun fromJson(objects: String): ArrayList<Reserva> {
             mReserva.nombre = columnas[2].text()
             mReserva.aula = columnas[3].text()
             mReservas.add(mReserva)
+        }
+    }
+
+    return mReservas
+}
+
+fun fromJsonReservasEspeciales(objects: String): ArrayList<Reserva> {
+    val mReservas: ArrayList<Reserva> = ArrayList()
+
+    val doc = Jsoup.parse(objects)
+    val tablas = doc.getElementsByTag("table")
+    if(tablas.isNotEmpty()){
+        if(tablas.size >= 2) {
+            val tablaReservasEspeciales = tablas[1]
+
+            val filas = tablaReservasEspeciales.getElementsByTag("tr")
+            filas.removeAt(0)
+
+            for (f in filas) {
+                val columnas = f.getElementsByTag("td")
+                val mReserva = Reserva()
+                mReserva.comision = columnas[0].text()
+                mReserva.horario = columnas[1].text()
+                mReserva.nombre = columnas[2].text()
+                mReserva.aula = columnas[3].text()
+                mReservas.add(mReserva)
+            }
         }
     }
 

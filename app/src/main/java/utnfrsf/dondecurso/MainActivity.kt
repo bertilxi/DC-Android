@@ -14,6 +14,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.widget.*
 import utnfrsf.dondecurso.adapter.MyArrayAdapter
+import utnfrsf.dondecurso.common.fromJsonReservasEspeciales
 import utnfrsf.dondecurso.domain.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     var carreras: ArrayList<Carrera> = ArrayList()
     var niveles: ArrayList<Nivel> = ArrayList()
     var reservas: ArrayList<Reserva> = ArrayList()
+    var reservasEspeciales: ArrayList<Reserva> = ArrayList()
 
     var carrera: Carrera? = null
     var nivel: Nivel? = null
@@ -135,8 +137,10 @@ class MainActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<String>?, response: Response<String>?) {
                     val mReservas = response?.body() as String
                     reservas = fromJson(mReservas)
+                    reservasEspeciales = fromJsonReservasEspeciales(mReservas)
                     val i = Intent(this@MainActivity, ReservasActivity::class.java)
                     i.putExtra("reservas", reservas)
+                    i.putExtra("reservas_especiales", reservasEspeciales)
                     startActivity(i)
                 }
 

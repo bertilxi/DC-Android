@@ -8,9 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
-import android.util.Log
 import android.view.*
-import android.widget.Button
 import utnfrsf.dondecurso.adapter.ReservaAdapter
 import utnfrsf.dondecurso.adapter.ReservaEspecialAdapter
 import utnfrsf.dondecurso.domain.Reserva
@@ -105,8 +103,6 @@ class ReservasActivity : AppCompatActivity(), ReservasListener {
 
             //buttonReserva.setOnClickListener { activity.finish() }
 
-
-            Log.v("INFO", arguments.get("section_number").toString())
             if (arguments.get("section_number") == 1) {
                 recyclerView.adapter = ReservaAdapter(reservaListener.obtenerReservas())
             }

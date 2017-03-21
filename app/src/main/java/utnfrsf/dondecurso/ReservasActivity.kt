@@ -1,52 +1,169 @@
 package utnfrsf.dondecurso
 
 import android.os.Bundle
+import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.*
 import android.util.Log
+import android.view.*
 import android.widget.Button
 import utnfrsf.dondecurso.adapter.ReservaAdapter
 import utnfrsf.dondecurso.adapter.ReservaEspecialAdapter
 import utnfrsf.dondecurso.domain.Reserva
 import utnfrsf.dondecurso.domain.ReservaEspecial
 
-class ReservasActivity : AppCompatActivity() {
+class ReservasActivity : AppCompatActivity(), ReservasListener {
+
     var reservas: ArrayList<Reserva> = ArrayList()
     var reservasEspeciales: ArrayList<ReservaEspecial> = ArrayList()
+
+    /**
+     * The [android.support.v4.view.PagerAdapter] that will provide
+     * fragments for each of the sections. We use a
+     * [FragmentPagerAdapter] derivative, which will keep every
+     * loaded fragment in memory. If this becomes too memory intensive, it
+     * may be best to switch to a
+     * [android.support.v4.app.FragmentStatePagerAdapter].
+     */
+    private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
+
+    /**
+     * The [ViewPager] that will host the section contents.
+     */
+    private var mViewPager: ViewPager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reservas)
 
-        val recyclerView = findViewById(R.id.recyclerViewReservas) as RecyclerView
-        val buttonReserva = findViewById(R.id.buttonNuevaConsulta) as Button
+        reservas = intent.getParcelableArrayListExtra<Reserva>("reservas")
+        reservasEspeciales = intent.getParcelableArrayListExtra<ReservaEspecial>("reservas_especiales")
 
-        buttonReserva.setOnClickListener { _ -> finish() }
+        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
-        val mAdapter = ReservaAdapter(reservas)
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = findViewById(R.id.container) as ViewPager
+        mViewPager!!.adapter = mSectionsPagerAdapter
 
-        recyclerView.layoutManager = LinearLayoutManager(applicationContext) as RecyclerView.LayoutManager?
-        recyclerView.itemAnimator = DefaultItemAnimator()
-        recyclerView.adapter = mAdapter
-        val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-        recyclerView.addItemDecoration(itemDecoration)
+        val tabLayout = findViewById(R.id.tabs) as TabLayout
+        tabLayout.setupWithViewPager(mViewPager)
+    }
 
-        reservas.addAll(intent.getParcelableArrayListExtra<Reserva>("reservas"))
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_reservas, menu)
+        return true
+    }
 
-        //Reservas Especiales
-        val recyclerViewReservasEspeciales = findViewById(R.id.recyclerViewReservasEspeciales) as RecyclerView
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        val id = item.itemId
 
-        val mAdapterReservasEspeciales = ReservaEspecialAdapter(reservasEspeciales)
 
-        recyclerViewReservasEspeciales.layoutManager = LinearLayoutManager(applicationContext)
-        recyclerViewReservasEspeciales.itemAnimator = DefaultItemAnimator()
-        recyclerViewReservasEspeciales.adapter = mAdapterReservasEspeciales
-        recyclerViewReservasEspeciales.addItemDecoration(itemDecoration)
+        if (id == R.id.action_settings) {
+            return true
+        }
 
-        reservasEspeciales.addAll(intent.getParcelableArrayListExtra<ReservaEspecial>("reservas_especiales"))
-        Log.d("APP", reservasEspeciales.toString())
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun obtenerReservas(): ArrayList<Reserva> {
+        return reservas
+    }
+
+    override fun obtenerReservasEspeciales(): ArrayList<ReservaEspecial> {
+        return reservasEspeciales
+    }
+
+    /**
+     * A placeholder fragment containing a simple view.
+     */
+    class PlaceholderFragment : Fragment() {
+
+        override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+                                  savedInstanceState: Bundle?): View? {
+            val rootView = inflater!!.inflate(R.layout.fragment_reservas, container, false)
+            initRecyclerView(rootView)
+            return rootView
+        }
+
+        fun initRecyclerView(rootView: View){
+            val recyclerView = rootView.findViewById(R.id.recyclerViewReservas) as RecyclerView
+            //val buttonReserva = rootView.findViewById(R.id.buttonNuevaConsulta) as Button
+            val reservaListener = activity as ReservasListener
+
+            //buttonReserva.setOnClickListener { activity.finish() }
+
+
+            Log.v("INFO", arguments.get("section_number").toString())
+            if (arguments.get("section_number") == 1) {
+                recyclerView.adapter = ReservaAdapter(reservaListener.obtenerReservas())
+            }
+            else{
+                recyclerView.adapter = ReservaEspecialAdapter(reservaListener.obtenerReservasEspeciales())
+            }
+
+            recyclerView.layoutManager = LinearLayoutManager(activity.applicationContext) as RecyclerView.LayoutManager?
+            recyclerView.itemAnimator = DefaultItemAnimator()
+            val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
+            recyclerView.addItemDecoration(itemDecoration)
+        }
+
+        companion object {
+            /**
+             * The fragment argument representing the section number for this
+             * fragment.
+             */
+            private val ARG_SECTION_NUMBER = "section_number"
+
+            /**
+             * Returns a new instance of this fragment for the given section
+             * number.
+             */
+            fun newInstance(sectionNumber: Int): PlaceholderFragment {
+                val fragment = PlaceholderFragment()
+                val args = Bundle()
+                args.putInt(ARG_SECTION_NUMBER, sectionNumber)
+                fragment.arguments = args
+                return fragment
+            }
+        }
+    }
+
+    /**
+     * A [FragmentPagerAdapter] that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+
+        override fun getItem(position: Int): Fragment {
+            // getItem is called to instantiate the fragment for the given page.
+            // Return a PlaceholderFragment (defined as a static inner class below).
+            return PlaceholderFragment.newInstance(position + 1)
+        }
+
+        override fun getCount(): Int {
+            // Show 2 total pages.
+            return 2
+        }
+
+        override fun getPageTitle(position: Int): CharSequence? {
+            when (position) {
+                0 -> return "RESERVAS"
+                1 -> return "RESERVAS ESPECIALES"
+            }
+            return null
+        }
     }
 }

@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     var carreras: ArrayList<Carrera> = ArrayList()
     var niveles: ArrayList<Nivel> = ArrayList()
     var reservas: ArrayList<Reserva> = ArrayList()
-    var reservasEspeciales: ArrayList<Reserva> = ArrayList()
+    var reservasEspeciales: ArrayList<ReservaEspecial> = ArrayList()
 
     var carrera: Carrera? = null
     var nivel: Nivel? = null

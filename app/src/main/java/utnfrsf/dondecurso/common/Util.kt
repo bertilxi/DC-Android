@@ -6,6 +6,7 @@ import org.jsoup.Jsoup
 import utnfrsf.dondecurso.domain.Comision
 import utnfrsf.dondecurso.domain.Materia
 import utnfrsf.dondecurso.domain.Reserva
+import utnfrsf.dondecurso.domain.ReservaEspecial
 
 fun fromJson(objects: LinkedTreeMap<String, Any>): ArrayList<Materia> {
     val mMaterias: ArrayList<Materia> = ArrayList()
@@ -66,8 +67,8 @@ fun fromJson(objects: String): ArrayList<Reserva> {
     return mReservas
 }
 
-fun fromJsonReservasEspeciales(objects: String): ArrayList<Reserva> {
-    val mReservas: ArrayList<Reserva> = ArrayList()
+fun fromJsonReservasEspeciales(objects: String): ArrayList<ReservaEspecial> {
+    val mReservas: ArrayList<ReservaEspecial> = ArrayList()
 
     val doc = Jsoup.parse(objects)
     val tablas = doc.getElementsByTag("table")
@@ -80,10 +81,19 @@ fun fromJsonReservasEspeciales(objects: String): ArrayList<Reserva> {
 
             for (f in filas) {
                 val columnas = f.getElementsByTag("td")
-                val mReserva = Reserva()
-                mReserva.comision = columnas[0].text()
-                mReserva.horario = columnas[1].text()
-                mReserva.nombre = columnas[2].text()
+                val mReserva = ReservaEspecial()
+                val s = columnas[0].text()
+                var split = s.split("Carrera: ", "Materia: ", "- ")
+                if(split.size >= 2){
+                    mReserva.carrera = split[1]
+                }
+                if(split.size >= 3){
+                    mReserva.materia = split[2]
+                }
+                if(split.size >= 4){
+                    mReserva.descripcion = split[3]
+                }
+                mReserva.horario = columnas[1].text() + " a " + columnas[2].text()
                 mReserva.aula = columnas[3].text()
                 mReservas.add(mReserva)
             }

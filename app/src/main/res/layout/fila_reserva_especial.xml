@@ -7,50 +7,68 @@
     android:layout_margin="10dp">
 
     <TextView
-        android:id="@+id/textViewMateria"
+        android:id="@+id/textViewMateriaEspecial"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="0dp"
-        android:text="ANALISIS MATEMATICO I"
+        android:text="MATEMÁTICA SUPERIOR"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/colorPrimary"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/textViewAulaEspecial" />
 
     <TextView
-        android:id="@+id/textViewHorario"
+        android:id="@+id/textViewHorarioEspecial"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="0dp"
         android:layout_marginTop="8dp"
         android:text="16:30 a 19:00"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewAula" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewAulaEspecial" />
 
     <TextView
-        android:id="@+id/textViewComision"
+        android:id="@+id/textViewDescripcionEspecial"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginLeft="0dp"
-        android:layout_marginTop="7dp"
-        android:text="COMISION B"
+        android:layout_marginTop="8dp"
+        android:text="Recuperatorio de la teoría"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewAula" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewMateriaEspecial"
+        app:layout_constraintRight_toLeftOf="@+id/textViewHorarioEspecial"
+        android:layout_marginRight="8dp"
+        app:layout_constraintHorizontal_bias="0.0" />
 
     <TextView
-        android:id="@+id/textViewAula"
+        android:id="@+id/textViewAulaEspecial"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="-1dp"
+        android:layout_marginRight="0dp"
         android:text="AULA 5"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@color/colorPrimary"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/textViewCarreraEspecial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="INGENIERÍA EN SISTEMAS DE INFORMACIÓN"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDescripcionEspecial"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintHorizontal_bias="0.0" />
 </android.support.constraint.ConstraintLayout>

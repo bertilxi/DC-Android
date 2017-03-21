@@ -6,13 +6,16 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.widget.Button
 import utnfrsf.dondecurso.adapter.ReservaAdapter
+import utnfrsf.dondecurso.adapter.ReservaEspecialAdapter
 import utnfrsf.dondecurso.domain.Reserva
+import utnfrsf.dondecurso.domain.ReservaEspecial
 
 class ReservasActivity : AppCompatActivity() {
     var reservas: ArrayList<Reserva> = ArrayList()
-    var reservasEspeciales: ArrayList<Reserva> = ArrayList()
+    var reservasEspeciales: ArrayList<ReservaEspecial> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +24,7 @@ class ReservasActivity : AppCompatActivity() {
         val recyclerView = findViewById(R.id.recyclerViewReservas) as RecyclerView
         val buttonReserva = findViewById(R.id.buttonNuevaConsulta) as Button
 
-        buttonReserva.setOnClickListener { v -> finish() }
+        buttonReserva.setOnClickListener { _ -> finish() }
 
         val mAdapter = ReservaAdapter(reservas)
 
@@ -36,13 +39,14 @@ class ReservasActivity : AppCompatActivity() {
         //Reservas Especiales
         val recyclerViewReservasEspeciales = findViewById(R.id.recyclerViewReservasEspeciales) as RecyclerView
 
-        val mAdapterReservasEspeciales = ReservaAdapter(reservasEspeciales)
+        val mAdapterReservasEspeciales = ReservaEspecialAdapter(reservasEspeciales)
 
         recyclerViewReservasEspeciales.layoutManager = LinearLayoutManager(applicationContext)
         recyclerViewReservasEspeciales.itemAnimator = DefaultItemAnimator()
         recyclerViewReservasEspeciales.adapter = mAdapterReservasEspeciales
         recyclerViewReservasEspeciales.addItemDecoration(itemDecoration)
 
-        reservasEspeciales.addAll(intent.getParcelableArrayListExtra<Reserva>("reservas_especiales"))
+        reservasEspeciales.addAll(intent.getParcelableArrayListExtra<ReservaEspecial>("reservas_especiales"))
+        Log.d("APP", reservasEspeciales.toString())
     }
 }

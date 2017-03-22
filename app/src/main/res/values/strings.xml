@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Donde Curso</string>
+    <string name="app_name">¿Dónde Curso?</string>
     <string name="button_buscar">Buscar</string>
     <string name="button_nueva_consulta">Nueva Consulta</string>
     <string name="carrera">Carrera</string>
@@ -10,4 +10,5 @@
     <string name="title_activity_reservas">Reservas</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="debe_seleccionar_una_carrera">Debe seleccionar una carrera</string>
 </resources>

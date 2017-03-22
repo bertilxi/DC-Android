@@ -2,15 +2,14 @@ package utnfrsf.dondecurso
 
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
-import android.widget.Button
-import android.widget.Spinner
-import android.widget.TextView
 import com.google.gson.internal.LinkedTreeMap
+import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -46,31 +45,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val spinnerCarerra = findViewById(R.id.spinner_carrera) as Spinner
-        val spinnerNivel = findViewById(R.id.spinner_nivel) as Spinner
-        val spinnerComision = findViewById(R.id.spinner_comision) as Spinner
-        val textViewFecha = findViewById(R.id.textViewFecha) as TextView
-        val spinnerMateria = findViewById(R.id.spinner_materia) as Spinner
-        val buttonBuscar = findViewById(R.id.buttonBuscar) as Button
-
         initData()
 
         val adapterCarrera = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, carreras, false)
-        val adapterNivel = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, niveles, false)
+        val adapterNivel = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, niveles, true)
         val adapterComision = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, comisiones, true)
         adapterMateria = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, filteredMaterias, true)
 
         spinnerMateria.adapter = adapterMateria
-        spinnerCarerra.adapter = adapterCarrera
+        spinnerCarrera.adapter = adapterCarrera
         spinnerNivel.adapter = adapterNivel
         spinnerComision.adapter = adapterComision
 
-        spinnerCarerra.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spinnerCarrera.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 carrera = carreras[position]
                 processSubjectsLoad()
+                buttonBuscar?.isEnabled = true
+                textViewErrorCarrera.visibility = View.GONE
             }
         }
 
@@ -131,34 +125,56 @@ class MainActivity : AppCompatActivity() {
         })
         textViewFecha.text = sdf.format(myCalendar.time)
 
-        buttonBuscar.setOnClickListener({
-            apiService.requestDistribution(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time),
-                    carrera?.id.toString(),
-                    nivel?.id.toString(),
-                    materia?.id.toString(),
-                    comision?.id.toString()).enqueue(object : Callback<String> {
-                override fun onResponse(call: Call<String>?, response: Response<String>?) {
-                    val mReservas = response?.body() as String
-                    reservas = fromJson(mReservas)
-                    reservasEspeciales = fromJsonReservasEspeciales(mReservas)
-                    val i = Intent(this@MainActivity, ReservasActivity::class.java)
-                    i.putExtra("reservas", reservas)
-                    i.putExtra("reservas_especiales", reservasEspeciales)
-                    startActivity(i)
-                }
+        buttonBuscar?.setOnClickListener({
+            if(validar()){
+                apiService.requestDistribution(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time),
+                        carrera?.id.toString(),
+                        nivel?.id.toString(),
+                        materia?.id.toString(),
+                        comision?.id.toString()).enqueue(object : Callback<String> {
+                    override fun onResponse(call: Call<String>?, response: Response<String>?) {
+                        val mReservas = response?.body() as String
+                        reservas = fromJson(mReservas)
+                        reservasEspeciales = fromJsonReservasEspeciales(mReservas)
+                        val i = Intent(this@MainActivity, ReservasActivity::class.java)
+                        i.putExtra("reservas", reservas)
+                        i.putExtra("reservas_especiales", reservasEspeciales)
+                        startActivity(i)
+                    }
 
-                override fun onFailure(call: Call<String>?, t: Throwable?) {
-                    throw t!!
-                }
-            })
+                    override fun onFailure(call: Call<String>?, t: Throwable?) {
+                        throw t!!
+                    }
+                })
+            }
         })
+    }
+
+    private fun  validar(): Boolean {
+        val valido = carrera?.id != 0
+        if(!valido){
+            mostrarErrorCarrera()
+            buttonBuscar?.isEnabled = false
+        }
+        return valido
+    }
+
+    private fun mostrarErrorCarrera() {
+        textViewErrorCarrera.error = getString(R.string.debe_seleccionar_una_carrera)
+        textViewErrorCarrera.visibility = View.VISIBLE
+        Snackbar.make(constraintLayout, getString(R.string.debe_seleccionar_una_carrera), Snackbar.LENGTH_LONG).show()
     }
 
     fun processSubjectsLoad() {
         filteredMaterias.clear()
-        if (carrera != null && nivel != null) {
+        if (carrera?.id != 0 && nivel?.id != 0) {
             materias.asSequence()
                     .filter { it.idCarrera == carrera?.id && it.nivel == nivel?.id }
+                    .forEach { filteredMaterias.add(it) }
+        }
+        else if(carrera?.id != 0 && nivel?.id == 0){
+            materias.asSequence()
+                    .filter { it.idCarrera == carrera?.id}
                     .forEach { filteredMaterias.add(it) }
         }
         if (filteredMaterias.size != 1) {
@@ -179,7 +195,7 @@ class MainActivity : AppCompatActivity() {
         carreras.add(Carrera(9, "Institucional"))
         carreras.add(Carrera(10, "Extensión Universitaria"))
 
-        niveles.add(Nivel(0, "Seleccione un nivel"))
+        niveles.add(Nivel(0, "Todos"))
         niveles.add(Nivel(1, "Nivel 1"))
         niveles.add(Nivel(2, "Nivel 2"))
         niveles.add(Nivel(3, "Nivel 3"))

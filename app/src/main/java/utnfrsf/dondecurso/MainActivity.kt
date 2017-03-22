@@ -2,10 +2,10 @@ package utnfrsf.dondecurso
 
 import android.app.DatePickerDialog
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import com.google.gson.internal.LinkedTreeMap
@@ -105,7 +105,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<LinkedTreeMap<String, Any>>?, t: Throwable?) {
-                throw t!!
+                Log.d("APP", t.toString())
+                Snackbar.make(constraintLayout, "No se ha podido conectar con el servidor", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Reintentar", { apiService.loadSubjects().enqueue(this) })
+                        .show()
             }
         })
 
@@ -143,7 +146,10 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(call: Call<String>?, t: Throwable?) {
-                        throw t!!
+                        Log.d("APP", t.toString())
+                        Snackbar.make(constraintLayout, "No se ha podido conectar con el servidor", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Reintentar", { buttonBuscar.callOnClick()})
+                                .show()
                     }
                 })
             }

@@ -7,9 +7,11 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
+import android.widget.Spinner
 import com.google.gson.internal.LinkedTreeMap
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
@@ -31,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     var materias: ArrayList<Materia> = ArrayList()
     var carreras: ArrayList<Carrera> = ArrayList()
     var niveles: ArrayList<Nivel> = ArrayList()
+    var comisiones: ArrayList<Comision> = ArrayList()
+    var filteredMaterias: ArrayList<Materia> = ArrayList()
     var reservas: ArrayList<Reserva> = ArrayList()
     var reservasEspeciales: ArrayList<ReservaEspecial> = ArrayList()
 
@@ -39,13 +43,11 @@ class MainActivity : AppCompatActivity() {
     var materia: Materia? = null
     var comision: Comision? = null
 
-    var comisiones: ArrayList<Comision> = ArrayList()
-    var filteredMaterias: ArrayList<Materia> = ArrayList()
-
     var adapterCarrera: MyArrayAdapter<Carrera>? = null
     var adapterNivel: MyArrayAdapter<Nivel>? = null
     var adapterMateria: MyArrayAdapter<Materia>? = null
     var adapterComision: MyArrayAdapter<Comision>? = null
+    var spinnerMateria: MySpinner? = null
     var preferences: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,12 +57,13 @@ class MainActivity : AppCompatActivity() {
         preferences = getPreferences(Context.MODE_PRIVATE)
         initData()
 
+        spinnerMateria = findViewById(R.id.spinnerMateria) as MySpinner?
         adapterCarrera = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, carreras, false)
         adapterNivel = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, niveles, true)
         adapterComision = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, comisiones, true)
         adapterMateria = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, filteredMaterias, true)
 
-        spinnerMateria.adapter = adapterMateria
+        spinnerMateria?.adapter = adapterMateria
         spinnerCarrera.adapter = adapterCarrera
         spinnerNivel.adapter = adapterNivel
         spinnerComision.adapter = adapterComision
@@ -76,7 +79,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        spinnerMateria.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spinnerMateria?.setOnItemSelectedEvenIfUnchangedListener(object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -89,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                 adapterComision!!.notifyDataSetChanged()
                 spinnerComision.setSelection(adapterComision?.getPosition(comision)!!)
             }
-        }
+        })
 
         spinnerNivel.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -110,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         spinnerNivel.setSelection(adapterNivel?.getPosition(nivel)!!)
         materias.add(materia!!)
         processSubjectsLoad()
-        spinnerMateria.setSelection(adapterMateria?.getPosition(materia)!!)
+        spinnerMateria?.setSelection(adapterMateria?.getPosition(materia)!!)
 
         apiService.loadSubjects().enqueue(object : Callback<LinkedTreeMap<String, Any>> {
             override fun onResponse(call: Call<LinkedTreeMap<String, Any>>?, response: Response<LinkedTreeMap<String, Any>>?) {
@@ -118,7 +121,6 @@ class MainActivity : AppCompatActivity() {
                 materias.clear()
                 materias.addAll(fromJson(mMaterias))
                 processSubjectsLoad()
-                spinnerMateria.setSelection(adapterMateria?.getPosition(materia)!!)
             }
 
             override fun onFailure(call: Call<LinkedTreeMap<String, Any>>?, t: Throwable?) {
@@ -211,7 +213,13 @@ class MainActivity : AppCompatActivity() {
             filteredMaterias.add(0, Materia(0, "Todas"))
         }
         adapterMateria?.notifyDataSetChanged()
-        spinnerMateria.setSelection(0)
+
+        if(filteredMaterias.contains(materia)){
+            spinnerMateria?.setSelection(adapterMateria?.getPosition(materia)!!)
+        }
+        else{
+            spinnerMateria?.setSelection(0)
+        }
 
         return
     }
@@ -241,5 +249,19 @@ class MainActivity : AppCompatActivity() {
         nivel = gson.fromJson(preferences?.getString("nivel", "{'id':0, 'nombre':'Todos'}"), Nivel::class.java)
         materia = gson.fromJson(preferences?.getString("materia", "{'id':0, 'nombre':'Todas'}"), Materia::class.java)
         comision = gson.fromJson(preferences?.getString("comision", "{'id':0, 'nombre':'Todas'}"), Comision::class.java)
+    }
+}
+
+class MySpinner(context: Context?, attrs: AttributeSet?) : Spinner(context, attrs) {
+    var listener: AdapterView.OnItemSelectedListener? = null
+
+    override fun setSelection(position: Int) {
+        super.setSelection(position)
+        listener?.onItemSelected(null, null, position, 0)
+    }
+
+    fun setOnItemSelectedEvenIfUnchangedListener(
+            listener: AdapterView.OnItemSelectedListener) {
+        this.listener = listener
     }
 }

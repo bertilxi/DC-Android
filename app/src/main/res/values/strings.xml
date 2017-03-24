@@ -11,4 +11,6 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="debe_seleccionar_una_carrera">Debe seleccionar una carrera</string>
+    <string name="error_conexion">No se ha podido conectar con el servidor</string>
+    <string name="reintentar">Reintentar</string>
 </resources>

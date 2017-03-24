@@ -33,4 +33,28 @@ class Materia() : Serializable {
         return nombre!!
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as Materia
+
+        if (id != other.id) return false
+        if (idCarrera != other.idCarrera) return false
+        if (comisiones != other.comisiones) return false
+        if (nombre != other.nombre) return false
+        if (nivel != other.nivel) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id ?: 0
+        result = 31 * result + (idCarrera ?: 0)
+        result = 31 * result + (comisiones?.hashCode() ?: 0)
+        result = 31 * result + (nombre?.hashCode() ?: 0)
+        result = 31 * result + (nivel ?: 0)
+        return result
+    }
+
 }

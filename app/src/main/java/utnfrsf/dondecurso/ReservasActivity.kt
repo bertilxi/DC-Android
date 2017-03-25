@@ -22,12 +22,11 @@ import utnfrsf.dondecurso.common.fromJsonReservasEspeciales
 import utnfrsf.dondecurso.domain.*
 import utnfrsf.dondecurso.service.Api
 import utnfrsf.dondecurso.service.ApiEndpoints
-import kotlin.collections.ArrayList
 
 class ReservasActivity : AppCompatActivity() {
 
     var apiService: ApiEndpoints = Api().service
-    var  call: Call<String>? = null
+    var call: Call<String>? = null
 
     /**
      * The [android.support.v4.view.PagerAdapter] that will provide
@@ -79,16 +78,16 @@ class ReservasActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
                 val reservas = fromJson(mReservas)
                 val reservasEspeciales = fromJsonReservasEspeciales(mReservas)
-                for(frag in supportFragmentManager.fragments){
+                for (frag in supportFragmentManager.fragments) {
                     (frag as PlaceholderFragment).cargarReservas(reservas, reservasEspeciales)
                 }
             }
 
             override fun onFailure(call: Call<String>?, t: Throwable?) {
-                if(!call!!.isCanceled){
+                if (!call!!.isCanceled) {
                     progressBar.visibility = View.GONE
                     Snackbar.make(main_content, getString(R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.reintentar), {progressBar.visibility = View.VISIBLE; call.clone().enqueue(this)})
+                            .setAction(getString(R.string.reintentar), { progressBar.visibility = View.VISIBLE; call.clone().enqueue(this) })
                             .show()
                 }
             }
@@ -126,7 +125,7 @@ class ReservasActivity : AppCompatActivity() {
     class PlaceholderFragment : Fragment() {
         var reservas: ArrayList<Reserva> = ArrayList()
         var reservasEspeciales: ArrayList<ReservaEspecial> = ArrayList()
-        var recyclerView : RecyclerView? = null
+        var recyclerView: RecyclerView? = null
         override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
             val rootView = inflater!!.inflate(R.layout.fragment_reservas, container, false)
@@ -134,13 +133,12 @@ class ReservasActivity : AppCompatActivity() {
             return rootView
         }
 
-        fun initRecyclerView(rootView: View){
+        fun initRecyclerView(rootView: View) {
             recyclerView = rootView.findViewById(R.id.recyclerViewReservas) as RecyclerView
 
             if (arguments.get("section_number") == 1) {
                 recyclerView?.adapter = ReservaAdapter(reservas)
-            }
-            else{
+            } else {
                 recyclerView?.adapter = ReservaEspecialAdapter(reservasEspeciales)
             }
 
@@ -150,7 +148,7 @@ class ReservasActivity : AppCompatActivity() {
             recyclerView?.addItemDecoration(itemDecoration)
         }
 
-        fun cargarReservas(listaReservas : ArrayList<Reserva>, listaReservasEspeciales : ArrayList<ReservaEspecial>){
+        fun cargarReservas(listaReservas: ArrayList<Reserva>, listaReservasEspeciales: ArrayList<ReservaEspecial>) {
             Log.d("APP", listaReservas.toString())
             this.reservas.addAll(listaReservas)
             this.reservasEspeciales.addAll(listaReservasEspeciales)

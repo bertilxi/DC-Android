@@ -7,7 +7,6 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 class Api {
     val client = OkHttpClient.Builder().build()!!
-
     private val BASE_URL = "http://www.frsf.utn.edu.ar/"
     val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)

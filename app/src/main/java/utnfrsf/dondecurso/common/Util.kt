@@ -1,6 +1,5 @@
 package utnfrsf.dondecurso.common
 
-import android.util.Log
 import com.google.gson.internal.LinkedTreeMap
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -46,7 +45,7 @@ fun fromJson(objects: String): ArrayList<Reserva> {
     val mReservas: ArrayList<Reserva> = ArrayList()
 
     val doc = Jsoup.parse(objects)
-    if(doc.getElementsByClass("bloque").isEmpty()){
+    if (doc.getElementsByClass("bloque").isEmpty()) {
         val tablas = doc.getElementsByTag("table")
         if (tablas.isNotEmpty()) {
             val tablaReservas = tablas[0]
@@ -74,17 +73,16 @@ fun fromJsonReservasEspeciales(objects: String): ArrayList<ReservaEspecial> {
     val doc = Jsoup.parse(objects)
     val tablas = doc.getElementsByTag("table")
     if (tablas.isNotEmpty()) {
-        var tablaReservasEspeciales : Element? = null
-        if(doc.getElementsByClass("bloque").isEmpty()){
-            if(tablas.size >=2){
+        var tablaReservasEspeciales: Element? = null
+        if (doc.getElementsByClass("bloque").isEmpty()) {
+            if (tablas.size >= 2) {
                 tablaReservasEspeciales = tablas[1]
             }
-        }
-        else{
+        } else {
             tablaReservasEspeciales = tablas[0]
         }
 
-        if(tablaReservasEspeciales != null){
+        if (tablaReservasEspeciales != null) {
             val filas = tablaReservasEspeciales.getElementsByTag("tr")
             filas?.removeAt(0)
 
@@ -93,13 +91,13 @@ fun fromJsonReservasEspeciales(objects: String): ArrayList<ReservaEspecial> {
                 val mReserva = ReservaEspecial()
                 val s = columnas[0].text()
                 val split = s.split("Carrera: ", "Materia: ", "- ")
-                if(split.size >= 2){
+                if (split.size >= 2) {
                     mReserva.carrera = split[1]
                 }
-                if(split.size >= 3){
+                if (split.size >= 3) {
                     mReserva.materia = split[2]
                 }
-                if(split.size >= 4){
+                if (split.size >= 4) {
                     mReserva.descripcion = split[3]
                 }
                 mReserva.horario = columnas[1].text() + " a " + columnas[2].text()

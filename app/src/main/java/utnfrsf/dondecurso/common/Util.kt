@@ -1,6 +1,5 @@
 package utnfrsf.dondecurso.common
 
-import android.util.Log
 import com.google.gson.internal.LinkedTreeMap
 import org.jsoup.Jsoup
 import utnfrsf.dondecurso.domain.Comision
@@ -10,8 +9,6 @@ import utnfrsf.dondecurso.domain.ReservaEspecial
 
 fun fromJson(objects: LinkedTreeMap<String, Any>): ArrayList<Materia> {
     val mMaterias: ArrayList<Materia> = ArrayList()
-
-    Log.v("keys", objects.keys.toString())
 
     for (key in objects.keys) {
         objects.get(key)

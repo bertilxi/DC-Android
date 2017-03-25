@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Spinner
@@ -124,7 +123,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<LinkedTreeMap<String, Any>>?, t: Throwable?) {
-                Log.d("APP", t.toString())
                 Snackbar.make(constraintLayout, getString(R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
                         .setAction(getString(R.string.reintentar), { apiService.loadSubjects().enqueue(this) })
                         .show()
@@ -165,7 +163,6 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(call: Call<String>?, t: Throwable?) {
-                        Log.d("APP", t.toString())
                         Snackbar.make(constraintLayout, getString(R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
                                 .setAction(getString(R.string.reintentar), { buttonBuscar.callOnClick()})
                                 .show()

@@ -88,7 +88,7 @@ class ReservasActivity : AppCompatActivity() {
                 if(!call!!.isCanceled){
                     progressBar.visibility = View.GONE
                     Snackbar.make(main_content, getString(R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.reintentar), {progressBar.visibility = View.VISIBLE; call.enqueue(this)})
+                            .setAction(getString(R.string.reintentar), {progressBar.visibility = View.VISIBLE; call.clone().enqueue(this)})
                             .show()
                 }
             }

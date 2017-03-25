@@ -11,6 +11,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Spinner
+import com.google.gson.Gson
 import com.google.gson.internal.LinkedTreeMap
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
@@ -18,12 +19,14 @@ import retrofit2.Callback
 import retrofit2.Response
 import utnfrsf.dondecurso.adapter.MyArrayAdapter
 import utnfrsf.dondecurso.common.fromJson
-import utnfrsf.dondecurso.domain.*
+import utnfrsf.dondecurso.domain.Carrera
+import utnfrsf.dondecurso.domain.Comision
+import utnfrsf.dondecurso.domain.Materia
+import utnfrsf.dondecurso.domain.Nivel
 import utnfrsf.dondecurso.service.Api
 import utnfrsf.dondecurso.service.ApiEndpoints
 import java.text.SimpleDateFormat
 import java.util.*
-import com.google.gson.Gson
 
 class MainActivity : AppCompatActivity() {
 
@@ -141,7 +144,7 @@ class MainActivity : AppCompatActivity() {
         textViewFecha.text = sdf.format(myCalendar.time)
 
         buttonBuscar?.setOnClickListener({
-            if(validar()){
+            if (validar()) {
                 val gson = Gson()
                 preferences?.edit()!!
                         .putString("carrera", gson.toJson(carrera))
@@ -150,20 +153,20 @@ class MainActivity : AppCompatActivity() {
                         .putString("comision", gson.toJson(comision))
                         .apply()
 
-               val i = Intent(this@MainActivity, ReservasActivity::class.java)
-               i.putExtra("fecha", SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time))
-               i.putExtra("carrera", carrera)
-               i.putExtra("nivel", nivel)
-               i.putExtra("materia", materia)
-               i.putExtra("comision", comision)
-               startActivity(i)
+                val i = Intent(this@MainActivity, ReservasActivity::class.java)
+                i.putExtra("fecha", SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time))
+                i.putExtra("carrera", carrera)
+                i.putExtra("nivel", nivel)
+                i.putExtra("materia", materia)
+                i.putExtra("comision", comision)
+                startActivity(i)
             }
         })
     }
 
-    private fun  validar(): Boolean {
+    private fun validar(): Boolean {
         val valido = carrera?.id != 0
-        if(!valido){
+        if (!valido) {
             mostrarErrorCarrera()
             buttonBuscar?.isEnabled = false
         }
@@ -182,10 +185,9 @@ class MainActivity : AppCompatActivity() {
             materias.asSequence()
                     .filter { it.idCarrera == carrera?.id && it.nivel == nivel?.id }
                     .forEach { filteredMaterias.add(it) }
-        }
-        else if(carrera?.id != 0 && nivel?.id == 0){
+        } else if (carrera?.id != 0 && nivel?.id == 0) {
             materias.asSequence()
-                    .filter { it.idCarrera == carrera?.id}
+                    .filter { it.idCarrera == carrera?.id }
                     .forEach { filteredMaterias.add(it) }
         }
         if (filteredMaterias.size != 1) {
@@ -193,10 +195,9 @@ class MainActivity : AppCompatActivity() {
         }
         adapterMateria?.notifyDataSetChanged()
 
-        if(filteredMaterias.contains(materia)){
+        if (filteredMaterias.contains(materia)) {
             spinnerMateria?.setSelection(adapterMateria?.getPosition(materia)!!)
-        }
-        else{
+        } else {
             spinnerMateria?.setSelection(0)
         }
 

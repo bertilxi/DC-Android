@@ -14,10 +14,10 @@ import java.util.*
 class ReservaAdapter(var reservas: ArrayList<Reserva>) : Adapter<ReservaAdapter.MyViewHolder>() {
     override fun onBindViewHolder(holder: MyViewHolder?, position: Int) {
         val reserva: Reserva = reservas[position]
-        holder!!.materia!!.text = reserva.nombre
-        holder.horario!!.text = reserva.horario
-        holder.comision!!.text = reserva.comision
-        holder.aula!!.text = reserva.aula
+        holder!!.materia.text = reserva.nombre
+        holder.horario.text = reserva.horario
+        holder.comision.text = reserva.comision
+        holder.aula.text = reserva.aula
     }
 
     override fun getItemCount(): Int {
@@ -31,16 +31,9 @@ class ReservaAdapter(var reservas: ArrayList<Reserva>) : Adapter<ReservaAdapter.
     }
 
     class MyViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        var materia: TextView? = null
-        var horario: TextView? = null
-        var aula: TextView? = null
-        var comision: TextView? = null
-
-        init {
-            materia = itemView!!.findViewById(R.id.textViewMateria) as TextView?
-            horario = itemView.findViewById(R.id.textViewHorario) as TextView?
-            aula = itemView.findViewById(R.id.textViewAula) as TextView?
-            comision = itemView.findViewById(R.id.textViewComision) as TextView?
-        }
+        var materia: TextView = itemView?.findViewById(R.id.textViewMateria) as TextView
+        var horario: TextView = itemView?.findViewById(R.id.textViewHorario) as TextView
+        var aula: TextView = itemView?.findViewById(R.id.textViewAula) as TextView
+        var comision: TextView = itemView?.findViewById(R.id.textViewComision) as TextView
     }
 }

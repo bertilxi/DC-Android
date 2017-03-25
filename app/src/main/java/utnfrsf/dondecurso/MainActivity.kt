@@ -25,6 +25,7 @@ import utnfrsf.dondecurso.service.ApiEndpoints
 import java.text.SimpleDateFormat
 import java.util.*
 import com.google.gson.Gson
+import okhttp3.ResponseBody
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,8 +47,9 @@ class MainActivity : AppCompatActivity() {
     var adapterNivel: MyArrayAdapter<Nivel>? = null
     var adapterMateria: MyArrayAdapter<Materia>? = null
     var adapterComision: MyArrayAdapter<Comision>? = null
-    var spinnerMateria: MySpinner? = null
     var preferences: SharedPreferences? = null
+
+    var call: Call<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,13 +58,12 @@ class MainActivity : AppCompatActivity() {
         preferences = getPreferences(Context.MODE_PRIVATE)
         initData()
 
-        spinnerMateria = findViewById(R.id.spinnerMateria) as MySpinner?
         adapterCarrera = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, carreras, false)
         adapterNivel = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, niveles, true)
         adapterComision = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, comisiones, true)
         adapterMateria = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, filteredMaterias, true)
 
-        spinnerMateria?.adapter = adapterMateria
+        spinnerMateria.adapter = adapterMateria
         spinnerCarrera.adapter = adapterCarrera
         spinnerNivel.adapter = adapterNivel
         spinnerComision.adapter = adapterComision
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        spinnerMateria?.setOnItemSelectedEvenIfUnchangedListener(object : AdapterView.OnItemSelectedListener {
+        spinnerMateria.setOnItemSelectedEvenIfUnchangedListener(object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -112,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         spinnerNivel.setSelection(adapterNivel?.getPosition(nivel)!!)
         materias.add(materia!!)
         processSubjectsLoad()
-        spinnerMateria?.setSelection(adapterMateria?.getPosition(materia)!!)
+        spinnerMateria.setSelection(adapterMateria?.getPosition(materia)!!)
 
         apiService.loadSubjects().enqueue(object : Callback<LinkedTreeMap<String, Any>> {
             override fun onResponse(call: Call<LinkedTreeMap<String, Any>>?, response: Response<LinkedTreeMap<String, Any>>?) {
@@ -147,11 +148,12 @@ class MainActivity : AppCompatActivity() {
 
         buttonBuscar?.setOnClickListener({
             if(validar()){
-                apiService.requestDistribution(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time),
+                call = apiService.requestDistribution(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time),
                         carrera?.id.toString(),
                         nivel?.id.toString(),
                         materia?.id.toString(),
-                        comision?.id.toString()).enqueue(object : Callback<String> {
+                        comision?.id.toString())
+                call?.enqueue(object : Callback<String> {
                     override fun onResponse(call: Call<String>?, response: Response<String>?) {
                         val mReservas = response?.body() as String
                         reservas = fromJson(mReservas)
@@ -163,9 +165,11 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(call: Call<String>?, t: Throwable?) {
-                        Snackbar.make(constraintLayout, getString(R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
-                                .setAction(getString(R.string.reintentar), { buttonBuscar.callOnClick()})
-                                .show()
+                        if(!call!!.isCanceled){
+                            Snackbar.make(constraintLayout, getString(R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(getString(R.string.reintentar), { buttonBuscar.callOnClick()})
+                                    .show()
+                        }
                     }
                 })
                 val gson = Gson()
@@ -246,6 +250,11 @@ class MainActivity : AppCompatActivity() {
         nivel = gson.fromJson(preferences?.getString("nivel", "{'id':0, 'nombre':'Todos'}"), Nivel::class.java)
         materia = gson.fromJson(preferences?.getString("materia", "{'id':0, 'nombre':'Todas'}"), Materia::class.java)
         comision = gson.fromJson(preferences?.getString("comision", "{'id':0, 'nombre':'Todas'}"), Comision::class.java)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        call?.cancel()
     }
 }
 

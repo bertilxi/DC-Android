@@ -46,7 +46,6 @@ fun fromJson(objects: String): ArrayList<Reserva> {
     val mReservas: ArrayList<Reserva> = ArrayList()
 
     val doc = Jsoup.parse(objects)
-    Log.d("APP", doc.toString())
     if(doc.getElementsByClass("bloque").isEmpty()){
         val tablas = doc.getElementsByTag("table")
         if (tablas.isNotEmpty()) {

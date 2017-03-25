@@ -18,14 +18,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import utnfrsf.dondecurso.adapter.MyArrayAdapter
 import utnfrsf.dondecurso.common.fromJson
-import utnfrsf.dondecurso.common.fromJsonReservasEspeciales
 import utnfrsf.dondecurso.domain.*
 import utnfrsf.dondecurso.service.Api
 import utnfrsf.dondecurso.service.ApiEndpoints
 import java.text.SimpleDateFormat
 import java.util.*
 import com.google.gson.Gson
-import okhttp3.ResponseBody
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,8 +33,6 @@ class MainActivity : AppCompatActivity() {
     var niveles: ArrayList<Nivel> = ArrayList()
     var comisiones: ArrayList<Comision> = ArrayList()
     var filteredMaterias: ArrayList<Materia> = ArrayList()
-    var reservas: ArrayList<Reserva> = ArrayList()
-    var reservasEspeciales: ArrayList<ReservaEspecial> = ArrayList()
 
     var carrera: Carrera? = null
     var nivel: Nivel? = null
@@ -48,8 +44,6 @@ class MainActivity : AppCompatActivity() {
     var adapterMateria: MyArrayAdapter<Materia>? = null
     var adapterComision: MyArrayAdapter<Comision>? = null
     var preferences: SharedPreferences? = null
-
-    var call: Call<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,30 +142,6 @@ class MainActivity : AppCompatActivity() {
 
         buttonBuscar?.setOnClickListener({
             if(validar()){
-                call = apiService.requestDistribution(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time),
-                        carrera?.id.toString(),
-                        nivel?.id.toString(),
-                        materia?.id.toString(),
-                        comision?.id.toString())
-                call?.enqueue(object : Callback<String> {
-                    override fun onResponse(call: Call<String>?, response: Response<String>?) {
-                        val mReservas = response?.body() as String
-                        reservas = fromJson(mReservas)
-                        reservasEspeciales = fromJsonReservasEspeciales(mReservas)
-                        val i = Intent(this@MainActivity, ReservasActivity::class.java)
-                        i.putExtra("reservas", reservas)
-                        i.putExtra("reservas_especiales", reservasEspeciales)
-                        startActivity(i)
-                    }
-
-                    override fun onFailure(call: Call<String>?, t: Throwable?) {
-                        if(!call!!.isCanceled){
-                            Snackbar.make(constraintLayout, getString(R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.reintentar), { buttonBuscar.callOnClick()})
-                                    .show()
-                        }
-                    }
-                })
                 val gson = Gson()
                 preferences?.edit()!!
                         .putString("carrera", gson.toJson(carrera))
@@ -179,6 +149,14 @@ class MainActivity : AppCompatActivity() {
                         .putString("materia", gson.toJson(materia))
                         .putString("comision", gson.toJson(comision))
                         .apply()
+
+               val i = Intent(this@MainActivity, ReservasActivity::class.java)
+               i.putExtra("fecha", SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time))
+               i.putExtra("carrera", carrera)
+               i.putExtra("nivel", nivel)
+               i.putExtra("materia", materia)
+               i.putExtra("comision", comision)
+               startActivity(i)
             }
         })
     }
@@ -250,11 +228,6 @@ class MainActivity : AppCompatActivity() {
         nivel = gson.fromJson(preferences?.getString("nivel", "{'id':0, 'nombre':'Todos'}"), Nivel::class.java)
         materia = gson.fromJson(preferences?.getString("materia", "{'id':0, 'nombre':'Todas'}"), Materia::class.java)
         comision = gson.fromJson(preferences?.getString("comision", "{'id':0, 'nombre':'Todas'}"), Comision::class.java)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        call?.cancel()
     }
 }
 

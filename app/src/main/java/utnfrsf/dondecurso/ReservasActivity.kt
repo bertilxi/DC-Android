@@ -1,6 +1,7 @@
 package utnfrsf.dondecurso
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -8,16 +9,25 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
+import android.util.Log
 import android.view.*
+import kotlinx.android.synthetic.main.activity_reservas.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import utnfrsf.dondecurso.adapter.ReservaAdapter
 import utnfrsf.dondecurso.adapter.ReservaEspecialAdapter
-import utnfrsf.dondecurso.domain.Reserva
-import utnfrsf.dondecurso.domain.ReservaEspecial
+import utnfrsf.dondecurso.common.fromJson
+import utnfrsf.dondecurso.common.fromJsonReservasEspeciales
+import utnfrsf.dondecurso.domain.*
+import utnfrsf.dondecurso.service.Api
+import utnfrsf.dondecurso.service.ApiEndpoints
+import kotlin.collections.ArrayList
 
-class ReservasActivity : AppCompatActivity(), ReservasListener {
+class ReservasActivity : AppCompatActivity() {
 
-    var reservas: ArrayList<Reserva> = ArrayList()
-    var reservasEspeciales: ArrayList<ReservaEspecial> = ArrayList()
+    var apiService: ApiEndpoints = Api().service
+    var  call: Call<String>? = null
 
     /**
      * The [android.support.v4.view.PagerAdapter] that will provide
@@ -38,9 +48,6 @@ class ReservasActivity : AppCompatActivity(), ReservasListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reservas)
 
-        reservas = intent.getParcelableArrayListExtra<Reserva>("reservas")
-        reservasEspeciales = intent.getParcelableArrayListExtra<ReservaEspecial>("reservas_especiales")
-
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -54,6 +61,43 @@ class ReservasActivity : AppCompatActivity(), ReservasListener {
 
         val tabLayout = findViewById(R.id.tabs) as TabLayout
         tabLayout.setupWithViewPager(mViewPager)
+
+        val fecha = intent.getStringExtra("fecha")
+        val carrera = intent.getSerializableExtra("carrera") as Carrera
+        val nivel = intent.getSerializableExtra("nivel") as Nivel
+        val materia = intent.getSerializableExtra("materia") as Materia
+        val comision = intent.getSerializableExtra("comision") as Comision
+
+        call = apiService.requestDistribution(fecha,
+                carrera.id.toString(),
+                nivel.id.toString(),
+                materia.id.toString(),
+                comision.id.toString())
+        call?.enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>?, response: Response<String>?) {
+                val mReservas = response?.body() as String
+                progressBar.visibility = View.GONE
+                val reservas = fromJson(mReservas)
+                val reservasEspeciales = fromJsonReservasEspeciales(mReservas)
+                for(frag in supportFragmentManager.fragments){
+                    (frag as PlaceholderFragment).cargarReservas(reservas, reservasEspeciales)
+                }
+            }
+
+            override fun onFailure(call: Call<String>?, t: Throwable?) {
+                if(!call!!.isCanceled){
+                    progressBar.visibility = View.GONE
+                    Snackbar.make(main_content, getString(R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.reintentar), {progressBar.visibility = View.VISIBLE; call.enqueue(this)})
+                            .show()
+                }
+            }
+        })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        call?.cancel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -76,19 +120,13 @@ class ReservasActivity : AppCompatActivity(), ReservasListener {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun obtenerReservas(): ArrayList<Reserva> {
-        return reservas
-    }
-
-    override fun obtenerReservasEspeciales(): ArrayList<ReservaEspecial> {
-        return reservasEspeciales
-    }
-
     /**
      * A placeholder fragment containing a simple view.
      */
     class PlaceholderFragment : Fragment() {
-
+        var reservas: ArrayList<Reserva> = ArrayList()
+        var reservasEspeciales: ArrayList<ReservaEspecial> = ArrayList()
+        var recyclerView : RecyclerView? = null
         override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
             val rootView = inflater!!.inflate(R.layout.fragment_reservas, container, false)
@@ -97,23 +135,27 @@ class ReservasActivity : AppCompatActivity(), ReservasListener {
         }
 
         fun initRecyclerView(rootView: View){
-            val recyclerView = rootView.findViewById(R.id.recyclerViewReservas) as RecyclerView
-            //val buttonReserva = rootView.findViewById(R.id.buttonNuevaConsulta) as Button
-            val reservaListener = activity as ReservasListener
-
-            //buttonReserva.setOnClickListener { activity.finish() }
+            recyclerView = rootView.findViewById(R.id.recyclerViewReservas) as RecyclerView
 
             if (arguments.get("section_number") == 1) {
-                recyclerView.adapter = ReservaAdapter(reservaListener.obtenerReservas())
+                recyclerView?.adapter = ReservaAdapter(reservas)
             }
             else{
-                recyclerView.adapter = ReservaEspecialAdapter(reservaListener.obtenerReservasEspeciales())
+                recyclerView?.adapter = ReservaEspecialAdapter(reservasEspeciales)
             }
 
-            recyclerView.layoutManager = LinearLayoutManager(activity.applicationContext) as RecyclerView.LayoutManager?
-            recyclerView.itemAnimator = DefaultItemAnimator()
+            recyclerView?.layoutManager = LinearLayoutManager(activity.applicationContext) as RecyclerView.LayoutManager?
+            recyclerView?.itemAnimator = DefaultItemAnimator()
             val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
-            recyclerView.addItemDecoration(itemDecoration)
+            recyclerView?.addItemDecoration(itemDecoration)
+        }
+
+        fun cargarReservas(listaReservas : ArrayList<Reserva>, listaReservasEspeciales : ArrayList<ReservaEspecial>){
+            Log.d("APP", listaReservas.toString())
+            this.reservas.addAll(listaReservas)
+            this.reservasEspeciales.addAll(listaReservasEspeciales)
+            recyclerView?.adapter?.notifyDataSetChanged()
+
         }
 
         companion object {

@@ -25,7 +25,7 @@ import utnfrsf.dondecurso.service.ApiEndpoints
 
 class ReservasActivity : AppCompatActivity() {
 
-    var apiService: ApiEndpoints = Api().service
+    var apiService: ApiEndpoints? = null
     var call: Call<String>? = null
 
     /**
@@ -47,6 +47,7 @@ class ReservasActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reservas)
 
+        apiService = Api(this).service
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -67,7 +68,7 @@ class ReservasActivity : AppCompatActivity() {
         val materia = intent.getSerializableExtra("materia") as Materia
         val comision = intent.getSerializableExtra("comision") as Comision
 
-        call = apiService.requestDistribution(fecha,
+        call = apiService!!.requestDistribution(fecha,
                 carrera.id.toString(),
                 nivel.id.toString(),
                 materia.id.toString(),

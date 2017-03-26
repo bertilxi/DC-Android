@@ -30,7 +30,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    var apiService: ApiEndpoints = Api().service
+    var apiService: ApiEndpoints? = null
     var materias: ArrayList<Materia> = ArrayList()
     var carreras: ArrayList<Carrera> = ArrayList()
     var niveles: ArrayList<Nivel> = ArrayList()
@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        apiService = Api(this).service
         preferences = getPreferences(Context.MODE_PRIVATE)
         initData()
 
@@ -112,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         processSubjectsLoad()
         spinnerMateria.setSelection(adapterMateria?.getPosition(materia)!!)
 
-        apiService.loadSubjects().enqueue(object : Callback<LinkedTreeMap<String, Any>> {
+        apiService!!.loadSubjects().enqueue(object : Callback<LinkedTreeMap<String, Any>> {
             override fun onResponse(call: Call<LinkedTreeMap<String, Any>>?, response: Response<LinkedTreeMap<String, Any>>?) {
                 val mMaterias = response?.body() as LinkedTreeMap<String, Any>
                 materias.clear()
@@ -122,7 +123,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<LinkedTreeMap<String, Any>>?, t: Throwable?) {
                 Snackbar.make(constraintLayout, getString(R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
-                        .setAction(getString(R.string.reintentar), { apiService.loadSubjects().enqueue(this) })
+                        .setAction(getString(R.string.reintentar), { apiService!!.loadSubjects().enqueue(this) })
                         .show()
             }
         })

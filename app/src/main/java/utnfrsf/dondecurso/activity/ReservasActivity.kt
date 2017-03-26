@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
 import android.util.Log
 import android.view.*
+import android.view.animation.*
 import kotlinx.android.synthetic.main.activity_reservas.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -22,6 +23,11 @@ import utnfrsf.dondecurso.view.ReservaEspecialAdapter
 import utnfrsf.dondecurso.domain.*
 import utnfrsf.dondecurso.service.Api
 import utnfrsf.dondecurso.service.ApiEndpoints
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+
+
+
 
 class ReservasActivity : AppCompatActivity() {
 
@@ -142,6 +148,25 @@ class ReservasActivity : AppCompatActivity() {
             recyclerView?.itemAnimator = DefaultItemAnimator()
             val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
             recyclerView?.addItemDecoration(itemDecoration)
+
+            //Animación
+            val set = AnimationSet(true)
+
+            var animation : Animation = AlphaAnimation(0.2f, 1.0f)
+            animation.duration = 300
+            set.addAnimation(animation)
+
+            animation = TranslateAnimation(
+                    Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                    Animation.RELATIVE_TO_PARENT, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f
+            )
+            animation.duration = 300
+            animation.interpolator = AccelerateDecelerateInterpolator()
+            set.addAnimation(animation)
+
+            val controller = LayoutAnimationController(set, 0.25f)
+
+            recyclerView?.layoutAnimation = controller
         }
 
         fun cargarReservas(listaReservas: ArrayList<Reserva>, listaReservasEspeciales: ArrayList<ReservaEspecial>) {

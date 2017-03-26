@@ -112,11 +112,6 @@ class ReservasActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         val id = item.itemId
 
-
-        if (id == R.id.action_settings) {
-            return true
-        }
-
         return super.onOptionsItemSelected(item)
     }
 
@@ -150,7 +145,6 @@ class ReservasActivity : AppCompatActivity() {
         }
 
         fun cargarReservas(listaReservas: ArrayList<Reserva>, listaReservasEspeciales: ArrayList<ReservaEspecial>) {
-            Log.d("APP", listaReservas.toString())
             this.reservas.addAll(listaReservas)
             this.reservasEspeciales.addAll(listaReservasEspeciales)
             recyclerView?.adapter?.notifyDataSetChanged()

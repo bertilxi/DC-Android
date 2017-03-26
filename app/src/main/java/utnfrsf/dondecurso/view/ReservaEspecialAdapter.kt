@@ -13,8 +13,7 @@ import java.util.*
 class ReservaEspecialAdapter(var reservas: ArrayList<ReservaEspecial>) : Adapter<ReservaEspecialAdapter.MyViewHolder>() {
     override fun onBindViewHolder(holder: MyViewHolder?, position: Int) {
         val reserva: ReservaEspecial = reservas[position]
-        holder!!.carrera.text = reserva.carrera
-        holder.materia.text = reserva.materia
+        holder!!.materia.text = reserva.materia
         holder.descripcion.text = reserva.descripcion
         holder.horario.text = reserva.horario
         holder.aula.text = reserva.aula
@@ -31,7 +30,6 @@ class ReservaEspecialAdapter(var reservas: ArrayList<ReservaEspecial>) : Adapter
     }
 
     class MyViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        var carrera: TextView = itemView?.findViewById(R.id.textViewCarreraEspecial) as TextView
         var materia: TextView = itemView?.findViewById(R.id.textViewMateriaEspecial) as TextView
         var descripcion: TextView = itemView?.findViewById(R.id.textViewDescripcionEspecial) as TextView
         var horario: TextView = itemView?.findViewById(R.id.textViewHorarioEspecial) as TextView

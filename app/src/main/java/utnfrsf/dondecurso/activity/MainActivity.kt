@@ -1,4 +1,4 @@
-package utnfrsf.dondecurso
+package utnfrsf.dondecurso.activity
 
 import android.app.DatePickerDialog
 import android.content.Context
@@ -7,29 +7,28 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.util.AttributeSet
 import android.view.View
 import android.widget.AdapterView
-import android.widget.Spinner
 import com.google.gson.Gson
 import com.google.gson.internal.LinkedTreeMap
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import utnfrsf.dondecurso.adapter.MyArrayAdapter
-import utnfrsf.dondecurso.common.fromJson
+import utnfrsf.dondecurso.common.Util
 import utnfrsf.dondecurso.domain.Carrera
 import utnfrsf.dondecurso.domain.Comision
 import utnfrsf.dondecurso.domain.Materia
 import utnfrsf.dondecurso.domain.Nivel
 import utnfrsf.dondecurso.service.Api
 import utnfrsf.dondecurso.service.ApiEndpoints
+import utnfrsf.dondecurso.view.MyArrayAdapter
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    val gson = Gson()
     var apiService: ApiEndpoints? = null
     var materias: ArrayList<Materia> = ArrayList()
     var carreras: ArrayList<Carrera> = ArrayList()
@@ -50,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(utnfrsf.dondecurso.R.layout.activity_main)
 
         apiService = Api(this).service
         preferences = getPreferences(Context.MODE_PRIVATE)
@@ -115,15 +114,15 @@ class MainActivity : AppCompatActivity() {
 
         apiService!!.loadSubjects().enqueue(object : Callback<LinkedTreeMap<String, Any>> {
             override fun onResponse(call: Call<LinkedTreeMap<String, Any>>?, response: Response<LinkedTreeMap<String, Any>>?) {
-                val mMaterias = response?.body() as LinkedTreeMap<String, Any>
                 materias.clear()
-                materias.addAll(fromJson(mMaterias))
+                val mMaterias = response?.body() as LinkedTreeMap<String, Any>
+                materias.addAll(Util.fromJson(mMaterias))
                 processSubjectsLoad()
             }
 
             override fun onFailure(call: Call<LinkedTreeMap<String, Any>>?, t: Throwable?) {
-                Snackbar.make(constraintLayout, getString(R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
-                        .setAction(getString(R.string.reintentar), { apiService!!.loadSubjects().enqueue(this) })
+                Snackbar.make(constraintLayout, getString(utnfrsf.dondecurso.R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getString(utnfrsf.dondecurso.R.string.reintentar), { apiService!!.loadSubjects().enqueue(this) })
                         .show()
             }
         })
@@ -146,7 +145,6 @@ class MainActivity : AppCompatActivity() {
 
         buttonBuscar?.setOnClickListener({
             if (validar()) {
-                val gson = Gson()
                 preferences?.edit()!!
                         .putString("carrera", gson.toJson(carrera))
                         .putString("nivel", gson.toJson(nivel))
@@ -175,9 +173,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun mostrarErrorCarrera() {
-        textViewErrorCarrera.error = getString(R.string.debe_seleccionar_una_carrera)
+        textViewErrorCarrera.error = getString(utnfrsf.dondecurso.R.string.debe_seleccionar_una_carrera)
         textViewErrorCarrera.visibility = View.VISIBLE
-        Snackbar.make(constraintLayout, getString(R.string.debe_seleccionar_una_carrera), Snackbar.LENGTH_LONG).show()
+        Snackbar.make(constraintLayout, getString(utnfrsf.dondecurso.R.string.debe_seleccionar_una_carrera), Snackbar.LENGTH_LONG).show()
     }
 
     fun processSubjectsLoad() {
@@ -225,7 +223,6 @@ class MainActivity : AppCompatActivity() {
         niveles.add(Nivel(6, "Nivel 6"))
         niveles.add(Nivel(7, "No Corresponde"))
 
-        val gson = Gson()
         carrera = gson.fromJson(preferences?.getString("carrera", "{'id':0, 'nombre':'Seleccione una carrera'}"), Carrera::class.java)
         nivel = gson.fromJson(preferences?.getString("nivel", "{'id':0, 'nombre':'Todos'}"), Nivel::class.java)
         materia = gson.fromJson(preferences?.getString("materia", "{'id':0, 'nombre':'Todas'}"), Materia::class.java)
@@ -233,16 +230,3 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class MySpinner(context: Context?, attrs: AttributeSet?) : Spinner(context, attrs) {
-    var listener: AdapterView.OnItemSelectedListener? = null
-
-    override fun setSelection(position: Int) {
-        super.setSelection(position)
-        listener?.onItemSelected(null, null, position, 0)
-    }
-
-    fun setOnItemSelectedEvenIfUnchangedListener(
-            listener: AdapterView.OnItemSelectedListener) {
-        this.listener = listener
-    }
-}

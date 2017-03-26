@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_margin="8dp"
-    tools:context="utnfrsf.dondecurso.MainActivity"
+    tools:context="utnfrsf.dondecurso.activity.MainActivity"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="81dp">
 
@@ -80,7 +80,7 @@
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1" />
 
-    <utnfrsf.dondecurso.MySpinner
+    <utnfrsf.dondecurso.view.MySpinner
         android:id="@+id/spinnerMateria"
         android:layout_width="0dp"
         android:layout_height="35dp"

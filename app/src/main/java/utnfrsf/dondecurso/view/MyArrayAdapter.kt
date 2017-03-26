@@ -1,4 +1,4 @@
-package utnfrsf.dondecurso.adapter
+package utnfrsf.dondecurso.view
 
 import android.content.Context
 import android.graphics.Color

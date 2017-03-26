@@ -1,4 +1,4 @@
-package utnfrsf.dondecurso
+package utnfrsf.dondecurso.activity
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -15,10 +15,10 @@ import kotlinx.android.synthetic.main.activity_reservas.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import utnfrsf.dondecurso.adapter.ReservaAdapter
-import utnfrsf.dondecurso.adapter.ReservaEspecialAdapter
-import utnfrsf.dondecurso.common.fromJson
-import utnfrsf.dondecurso.common.fromJsonReservasEspeciales
+import utnfrsf.dondecurso.R
+import utnfrsf.dondecurso.common.Util
+import utnfrsf.dondecurso.view.ReservaAdapter
+import utnfrsf.dondecurso.view.ReservaEspecialAdapter
 import utnfrsf.dondecurso.domain.*
 import utnfrsf.dondecurso.service.Api
 import utnfrsf.dondecurso.service.ApiEndpoints
@@ -77,8 +77,8 @@ class ReservasActivity : AppCompatActivity() {
             override fun onResponse(call: Call<String>?, response: Response<String>?) {
                 val mReservas = response?.body() as String
                 progressBar.visibility = View.GONE
-                val reservas = fromJson(mReservas)
-                val reservasEspeciales = fromJsonReservasEspeciales(mReservas)
+                val reservas = Util.fromJson(mReservas)
+                val reservasEspeciales = Util.fromJsonReservasEspeciales(mReservas)
                 for (frag in supportFragmentManager.fragments) {
                     (frag as PlaceholderFragment).cargarReservas(reservas, reservasEspeciales)
                 }

@@ -1,4 +1,4 @@
-package utnfrsf.dondecurso
+package utnfrsf.dondecurso.activity
 
 import utnfrsf.dondecurso.domain.Reserva
 import utnfrsf.dondecurso.domain.ReservaEspecial

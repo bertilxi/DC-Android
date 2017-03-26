@@ -100,8 +100,8 @@ object Util {
                     if (split.size >= 3) {
                         mReserva.materia = split[2]
                     }
-                    if (split.size >= 4) {
-                        mReserva.descripcion = split[3]
+                    for(i in 4..split.size ){
+                        mReserva.descripcion += split[i-1] + '\n'
                     }
                     mReserva.horario = columnas[1].text() + " a " + columnas[2].text()
                     mReserva.aula = columnas[3].text()

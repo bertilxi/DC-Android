@@ -143,29 +143,24 @@ class MainActivity : AppCompatActivity() {
         })
         textViewFecha.text = sdf.format(myCalendar.time)
 
-        val runnable: Runnable = Runnable {
-            buttonBuscar?.setOnClickListener({
-                if (validar()) {
-                    preferences?.edit()!!
-                            .putString("carrera", gson.toJson(carrera))
-                            .putString("nivel", gson.toJson(nivel))
-                            .putString("materia", gson.toJson(materia))
-                            .putString("comision", gson.toJson(comision))
-                            .apply()
+        buttonBuscar?.setOnClickListener({
+            if (validar()) {
+                preferences?.edit()!!
+                        .putString("carrera", gson.toJson(carrera))
+                        .putString("nivel", gson.toJson(nivel))
+                        .putString("materia", gson.toJson(materia))
+                        .putString("comision", gson.toJson(comision))
+                        .apply()
 
-                    val i = Intent(this@MainActivity, ReservasActivity::class.java)
-                    i.putExtra("fecha", SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time))
-                    i.putExtra("carrera", carrera)
-                    i.putExtra("nivel", nivel)
-                    i.putExtra("materia", materia)
-                    i.putExtra("comision", comision)
-                    startActivity(i)
-                }
-            })
-        }
-
-        buttonBuscar?.postDelayed(runnable, 1500)
-        
+                val i = Intent(this@MainActivity, ReservasActivity::class.java)
+                i.putExtra("fecha", SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time))
+                i.putExtra("carrera", carrera)
+                i.putExtra("nivel", nivel)
+                i.putExtra("materia", materia)
+                i.putExtra("comision", comision)
+                startActivity(i)
+            }
+        })
     }
 
     private fun validar(): Boolean {

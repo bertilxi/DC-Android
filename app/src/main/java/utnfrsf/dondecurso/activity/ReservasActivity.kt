@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
-import android.util.Log
 import android.view.*
 import android.view.animation.*
 import kotlinx.android.synthetic.main.activity_reservas.*
@@ -18,15 +17,11 @@ import retrofit2.Callback
 import retrofit2.Response
 import utnfrsf.dondecurso.R
 import utnfrsf.dondecurso.common.Util
-import utnfrsf.dondecurso.view.ReservaAdapter
-import utnfrsf.dondecurso.view.ReservaEspecialAdapter
 import utnfrsf.dondecurso.domain.*
 import utnfrsf.dondecurso.service.Api
 import utnfrsf.dondecurso.service.ApiEndpoints
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
-
-
+import utnfrsf.dondecurso.view.ReservaAdapter
+import utnfrsf.dondecurso.view.ReservaEspecialAdapter
 
 
 class ReservasActivity : AppCompatActivity() {
@@ -152,7 +147,7 @@ class ReservasActivity : AppCompatActivity() {
             //Animación
             val set = AnimationSet(true)
 
-            var animation : Animation = AlphaAnimation(0.2f, 1.0f)
+            var animation: Animation = AlphaAnimation(0.2f, 1.0f)
             animation.duration = 300
             set.addAnimation(animation)
 

@@ -9,15 +9,16 @@ android {
         applicationId "utnfrsf.dondecurso"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 5
+        versionCode 6
         versionName "1.0.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }

@@ -1,7 +1,5 @@
 package utnfrsf.dondecurso.common
 
-import android.content.Context
-import android.net.ConnectivityManager
 import com.google.gson.internal.LinkedTreeMap
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -113,10 +111,12 @@ object Util {
         return mReservas
     }
 
-    fun isOnline(context: Context): Boolean {
+/*    fun isOnline(context: Context): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val netInfo = cm.activeNetworkInfo
         return netInfo != null && netInfo.isConnectedOrConnecting
     }
+*/
+
 }
 

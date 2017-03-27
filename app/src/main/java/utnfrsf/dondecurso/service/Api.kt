@@ -7,7 +7,6 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import utnfrsf.dondecurso.common.Util
 import java.io.File
 
 class Api(context: Context) {
@@ -19,17 +18,10 @@ class Api(context: Context) {
     private val REWRITE_CACHE_CONTROL_INTERCEPTOR = Interceptor { chain ->
         val originalResponse = chain.proceed(chain.request())
         val maxAge: Int = 60 * 5 // read from cache for 5 minutes
-        val maxStale: Int = 60 * 60 * 24 * 28 // tolerate 4-weeks stale
-        if (Util.isOnline(context)) {
-            originalResponse.newBuilder()
-                    .header("Cache-Control", "public, max-age=$maxAge, only-if-cached")
-                    .build()
-        } else {
-            originalResponse.newBuilder()
-                    .header("Cache-Control", "public, max-stale=$maxStale, only-if-cached")
-                    .build()
-        }
-
+        // val maxStale: Int = 60 * 60 * 24 * 28 // tolerate 4-weeks stale
+        originalResponse.newBuilder()
+                .header("Cache-Control", "public, max-age=$maxAge, only-if-cached")
+                .build()
     }
 
     private val client = OkHttpClient.Builder()

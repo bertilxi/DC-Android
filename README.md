@@ -1,7 +1,7 @@
 # ¿Dónde Curso?
 
 <p align="center">
-  <img src="app/src/main/ic_launcher-web.png" width="128"/>
+  <img src="app/src/main/ic_launcher.svg" width="256"/>
 </p>
 
 ## Tabla de Contenidos

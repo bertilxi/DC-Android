@@ -12,8 +12,7 @@ class MySpinner(context: Context?, attrs: AttributeSet?) : Spinner(context, attr
         listener?.onItemSelected(null, null, position, 0)
     }
 
-    fun setOnItemSelectedEvenIfUnchangedListener(
-            listener: OnItemSelectedListener) {
+    fun setOnItemSelectedEvenIfUnchangedListener(listener: OnItemSelectedListener) {
         this.listener = listener
     }
 }

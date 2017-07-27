@@ -1,14 +1,15 @@
 package utnfrsf.dondecurso.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import io.paperdb.Paper
+import utnfrsf.dondecurso.common.launchActivity
 
 class SplashScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val i = Intent(this, MainActivity::class.java)
-        startActivity(i)
+        Paper.init(this)
+        launchActivity(MainActivity())
         finish()
     }
 }

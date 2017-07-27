@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import utnfrsf.dondecurso.R
+import utnfrsf.dondecurso.common.findView
 import utnfrsf.dondecurso.domain.ReservaEspecial
 import java.util.*
 
@@ -29,10 +30,10 @@ class ReservaEspecialAdapter(var reservas: ArrayList<ReservaEspecial>) : Adapter
         return MyViewHolder(itemView)
     }
 
-    class MyViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        var materia: TextView = itemView?.findViewById(R.id.textViewMateriaEspecial) as TextView
-        var descripcion: TextView = itemView?.findViewById(R.id.textViewDescripcionEspecial) as TextView
-        var horario: TextView = itemView?.findViewById(R.id.textViewHorarioEspecial) as TextView
-        var aula: TextView = itemView?.findViewById(R.id.textViewAulaEspecial) as TextView
+    class MyViewHolder(view: View?) : RecyclerView.ViewHolder(view) {
+        var materia: TextView = view?.findView<TextView>(R.id.textViewMateriaEspecial)!!
+        var descripcion: TextView = view?.findView<TextView>(R.id.textViewDescripcionEspecial)!!
+        var horario: TextView = view?.findView<TextView>(R.id.textViewHorarioEspecial)!!
+        var aula: TextView = view?.findView<TextView>(R.id.textViewAulaEspecial)!!
     }
 }

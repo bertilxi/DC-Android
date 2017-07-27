@@ -160,7 +160,7 @@
         app:layout_constraintLeft_toLeftOf="@+id/textViewFecha"
         app:layout_constraintRight_toRightOf="@+id/textViewFecha"
         app:layout_constraintTop_toBottomOf="@+id/textViewFecha"
-        app:layout_constraintVertical_bias="0.927"
+        app:layout_constraintVertical_bias="1.0"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />

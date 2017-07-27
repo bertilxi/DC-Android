@@ -1,45 +1,42 @@
 package utnfrsf.dondecurso.domain
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
 
-class Comision() : Serializable {
+data class Comision(@SerializedName("id")
+                    @Expose
+                    var id: Int? = null,
+                    @SerializedName("nombre")
+                    @Expose
+                    var nombre: String? = null) : Parcelable {
 
-    private val serialVersionUID = 5011134580201116098L
-
-    @SerializedName("id")
-    @Expose
-    var id: Int? = null
-    @SerializedName("nombre")
-    @Expose
-    var nombre: String? = null
-
-    constructor(id: Int?, nombre: String?) : this() {
-        this.id = id
-        this.nombre = nombre
-    }
+    constructor(parcel: Parcel) : this(
+            parcel.readValue(Int::class.java.classLoader) as? Int,
+            parcel.readString())
 
     override fun toString(): String {
         return nombre.toString()
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other?.javaClass != javaClass) return false
-
-        other as Comision
-
-        if (id != other.id) return false
-        if (nombre != other.nombre) return false
-
-        return true
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeValue(id)
+        parcel.writeString(nombre)
     }
 
-    override fun hashCode(): Int {
-        var result = id ?: 0
-        result = 31 * result + (nombre?.hashCode() ?: 0)
-        return result
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Comision> {
+        override fun createFromParcel(parcel: Parcel): Comision {
+            return Comision(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Comision?> {
+            return arrayOfNulls(size)
+        }
     }
 
 }

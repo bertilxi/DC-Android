@@ -1,35 +1,28 @@
 package utnfrsf.dondecurso.activity
 
 import android.app.DatePickerDialog
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.AdapterView
-import com.google.gson.Gson
 import com.google.gson.internal.LinkedTreeMap
+import io.paperdb.Paper
 import kotlinx.android.synthetic.main.activity_main.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import utnfrsf.dondecurso.common.Util
+import utnfrsf.dondecurso.common.*
 import utnfrsf.dondecurso.domain.Carrera
 import utnfrsf.dondecurso.domain.Comision
 import utnfrsf.dondecurso.domain.Materia
 import utnfrsf.dondecurso.domain.Nivel
 import utnfrsf.dondecurso.service.Api
-import utnfrsf.dondecurso.service.ApiEndpoints
 import utnfrsf.dondecurso.view.MyArrayAdapter
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    val gson = Gson()
-    var apiService: ApiEndpoints? = null
+    private var api = Api.service
+
     var materias: ArrayList<Materia> = ArrayList()
     var carreras: ArrayList<Carrera> = ArrayList()
     var niveles: ArrayList<Nivel> = ArrayList()
@@ -45,87 +38,13 @@ class MainActivity : AppCompatActivity() {
     var adapterNivel: MyArrayAdapter<Nivel>? = null
     var adapterMateria: MyArrayAdapter<Materia>? = null
     var adapterComision: MyArrayAdapter<Comision>? = null
-    var preferences: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(utnfrsf.dondecurso.R.layout.activity_main)
 
-        apiService = Api(this).service
-        preferences = getPreferences(Context.MODE_PRIVATE)
-        initData()
-
-        adapterCarrera = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, carreras, false)
-        adapterNivel = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, niveles, true)
-        adapterComision = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, comisiones, true)
-        adapterMateria = MyArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, filteredMaterias, true)
-
-        spinnerMateria.adapter = adapterMateria
-        spinnerCarrera.adapter = adapterCarrera
-        spinnerNivel.adapter = adapterNivel
-        spinnerComision.adapter = adapterComision
-
-        spinnerCarrera.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                carrera = carreras[position]
-                processSubjectsLoad()
-                buttonBuscar?.isEnabled = true
-                textViewErrorCarrera.visibility = View.GONE
-            }
-        }
-
-        spinnerMateria.setOnItemSelectedEvenIfUnchangedListener(object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                materia = filteredMaterias[position]
-                comisiones.clear()
-                comisiones.addAll(materia!!.comisiones!!)
-                if (comisiones.size != 1) {
-                    comisiones.add(0, Comision(0, "Todas"))
-                }
-                adapterComision!!.notifyDataSetChanged()
-                spinnerComision.setSelection(adapterComision?.getPosition(comision)!!)
-            }
-        })
-
-        spinnerNivel.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                nivel = niveles[position]
-                processSubjectsLoad()
-            }
-        }
-
-        spinnerComision.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                comision = comisiones[position]
-            }
-        }
-
-        spinnerCarrera.setSelection(adapterCarrera?.getPosition(carrera)!!)
-        spinnerNivel.setSelection(adapterNivel?.getPosition(nivel)!!)
-        materias.add(materia!!)
-        processSubjectsLoad()
-        spinnerMateria.setSelection(adapterMateria?.getPosition(materia)!!)
-
-        apiService!!.loadSubjects().enqueue(object : Callback<LinkedTreeMap<String, Any>> {
-            override fun onResponse(call: Call<LinkedTreeMap<String, Any>>?, response: Response<LinkedTreeMap<String, Any>>?) {
-                materias.clear()
-                val mMaterias = response?.body() as LinkedTreeMap<String, Any>
-                materias.addAll(Util.fromJson(mMaterias))
-                processSubjectsLoad()
-            }
-
-            override fun onFailure(call: Call<LinkedTreeMap<String, Any>>?, t: Throwable?) {
-                Snackbar.make(constraintLayout, getString(utnfrsf.dondecurso.R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
-                        .setAction(getString(utnfrsf.dondecurso.R.string.reintentar), { apiService!!.loadSubjects().enqueue(this) })
-                        .show()
-            }
-        })
+        initView()
+        requestLoads()
 
         val myFormat = "dd MMMM yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
@@ -136,30 +55,45 @@ class MainActivity : AppCompatActivity() {
                 myCalendar.set(Calendar.YEAR, year)
                 myCalendar.set(Calendar.MONTH, monthOfYear)
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
                 textViewFecha.text = sdf.format(myCalendar.time)
             }
             DatePickerDialog(this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show()
         })
+
         textViewFecha.text = sdf.format(myCalendar.time)
 
         buttonBuscar?.setOnClickListener({
-            if (validar()) {
-                preferences?.edit()!!
-                        .putString("carrera", gson.toJson(carrera))
-                        .putString("nivel", gson.toJson(nivel))
-                        .putString("materia", gson.toJson(materia))
-                        .putString("comision", gson.toJson(comision))
-                        .apply()
 
-                val i = Intent(this@MainActivity, ReservasActivity::class.java)
-                i.putExtra("fecha", SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time))
-                i.putExtra("carrera", carrera)
-                i.putExtra("nivel", nivel)
-                i.putExtra("materia", materia)
-                i.putExtra("comision", comision)
-                startActivity(i)
+            if (!validar()) {
+                return@setOnClickListener
             }
+
+            val fecha = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(myCalendar.time)
+
+            async {
+                Paper.book().write("fecha", fecha)
+                Paper.book().write("carrera", carrera)
+                Paper.book().write("nivel", nivel)
+                Paper.book().write("materia", materia)
+                Paper.book().write("comision", comision)
+                onUI {
+                    launchActivity(ReservasActivity())
+                }
+            }
+
+        })
+    }
+
+    private fun requestLoads() {
+        api.loadSubjects().enqueue({ _, response ->
+            materias.clear()
+            val mMaterias = response?.body() as LinkedTreeMap<String, Any>
+            materias.addAll(Util.fromJson(mMaterias))
+            processSubjectsLoad()
+        }, { _, _ ->
+            Snackbar.make(constraintLayout, getString(utnfrsf.dondecurso.R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(getString(utnfrsf.dondecurso.R.string.reintentar), { requestLoads() })
+                    .show()
         })
     }
 
@@ -199,34 +133,98 @@ class MainActivity : AppCompatActivity() {
         } else {
             spinnerMateria?.setSelection(0)
         }
-
-        return
     }
 
-    fun initData() {
-        carreras.add(Carrera(0, "Seleccione una carrera"))
-        carreras.add(Carrera(1, "Ingeniería en Sistemas"))
-        carreras.add(Carrera(2, "Ingeniería Industrial"))
-        carreras.add(Carrera(5, "Ingeniería Eléctrica"))
-        carreras.add(Carrera(6, "Ingeniería Mecánica"))
-        carreras.add(Carrera(7, "Ingeniería Civil"))
-        carreras.add(Carrera(8, "Tecnicatura Superior en Mecatrónica"))
-        carreras.add(Carrera(9, "Institucional"))
-        carreras.add(Carrera(10, "Extensión Universitaria"))
+    fun initView() {
 
-        niveles.add(Nivel(0, "Todos"))
-        niveles.add(Nivel(1, "Nivel 1"))
-        niveles.add(Nivel(2, "Nivel 2"))
-        niveles.add(Nivel(3, "Nivel 3"))
-        niveles.add(Nivel(4, "Nivel 4"))
-        niveles.add(Nivel(5, "Nivel 5"))
-        niveles.add(Nivel(6, "Nivel 6"))
-        niveles.add(Nivel(7, "No Corresponde"))
+        async {
 
-        carrera = gson.fromJson(preferences?.getString("carrera", "{'id':0, 'nombre':'Seleccione una carrera'}"), Carrera::class.java)
-        nivel = gson.fromJson(preferences?.getString("nivel", "{'id':0, 'nombre':'Todos'}"), Nivel::class.java)
-        materia = gson.fromJson(preferences?.getString("materia", "{'id':0, 'nombre':'Todas'}"), Materia::class.java)
-        comision = gson.fromJson(preferences?.getString("comision", "{'id':0, 'nombre':'Todas'}"), Comision::class.java)
+            carreras.add(Carrera(0, "Seleccione una carrera"))
+            carreras.add(Carrera(1, "Ingeniería en Sistemas"))
+            carreras.add(Carrera(2, "Ingeniería Industrial"))
+            carreras.add(Carrera(5, "Ingeniería Eléctrica"))
+            carreras.add(Carrera(6, "Ingeniería Mecánica"))
+            carreras.add(Carrera(7, "Ingeniería Civil"))
+            carreras.add(Carrera(8, "Tecnicatura Superior en Mecatrónica"))
+            carreras.add(Carrera(9, "Institucional"))
+            carreras.add(Carrera(10, "Extensión Universitaria"))
+
+            niveles.add(Nivel(0, "Todos"))
+            niveles.add(Nivel(1, "Nivel 1"))
+            niveles.add(Nivel(2, "Nivel 2"))
+            niveles.add(Nivel(3, "Nivel 3"))
+            niveles.add(Nivel(4, "Nivel 4"))
+            niveles.add(Nivel(5, "Nivel 5"))
+            niveles.add(Nivel(6, "Nivel 6"))
+            niveles.add(Nivel(7, "No Corresponde"))
+
+            carrera = Paper.book().read("carrera", Carrera(0, "Seleccione una carrera"))
+            nivel = Paper.book().read("nivel", Nivel(0, "Todos"))
+            materia = Paper.book().read("materia", Materia(0, "Todas"))
+            comision = Paper.book().read("comision", Comision(0, "Todas"))
+
+            onUI {
+
+                adapterCarrera = MyArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_dropdown_item, carreras, false)
+                adapterNivel = MyArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_dropdown_item, niveles, true)
+                adapterComision = MyArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_dropdown_item, comisiones, true)
+                adapterMateria = MyArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_dropdown_item, filteredMaterias, true)
+
+                spinnerMateria.adapter = adapterMateria
+                spinnerCarrera.adapter = adapterCarrera
+                spinnerNivel.adapter = adapterNivel
+                spinnerComision.adapter = adapterComision
+
+                spinnerCarrera.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        carrera = carreras[position]
+                        processSubjectsLoad()
+                        buttonBuscar?.isEnabled = true
+                        textViewErrorCarrera.visibility = View.GONE
+                    }
+                }
+
+                spinnerMateria.setOnItemSelectedEvenIfUnchangedListener(object : AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        materia = filteredMaterias[position]
+                        comisiones.clear()
+                        comisiones.addAll(materia!!.comisiones!!)
+                        if (comisiones.size != 1) {
+                            comisiones.add(0, Comision(0, "Todas"))
+                        }
+                        adapterComision!!.notifyDataSetChanged()
+                        spinnerComision.setSelection(adapterComision?.getPosition(comision)!!)
+                    }
+                })
+
+                spinnerNivel.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        nivel = niveles[position]
+                        processSubjectsLoad()
+                    }
+                }
+
+                spinnerComision.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        comision = comisiones[position]
+                    }
+                }
+
+                spinnerCarrera.setSelection(adapterCarrera?.getPosition(carrera)!!)
+                spinnerNivel.setSelection(adapterNivel?.getPosition(nivel)!!)
+
+                materias.add(materia!!)
+                processSubjectsLoad()
+                spinnerMateria.setSelection(adapterMateria?.getPosition(materia)!!)
+            }
+        }
+
     }
 }
 

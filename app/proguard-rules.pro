@@ -16,6 +16,8 @@
 
 # Gson specific classes
 -keep class sun.misc.Unsafe { *; }
+-keep class sun.misc.** { *; }
+-dontwarn sun.misc.**
 #-keep class com.google.gson.stream.** { *; }
 
 # Application classes that will be serialized/deserialized over Gson

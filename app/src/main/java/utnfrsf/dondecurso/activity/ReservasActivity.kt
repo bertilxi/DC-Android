@@ -2,15 +2,17 @@ package utnfrsf.dondecurso.activity
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
 import android.view.*
 import android.view.animation.*
+import android.widget.ProgressBar
 import io.paperdb.Paper
-import kotlinx.android.synthetic.main.activity_reservas.*
 import retrofit2.Call
 import utnfrsf.dondecurso.R
 import utnfrsf.dondecurso.common.Util
@@ -27,6 +29,7 @@ class ReservasActivity : AppCompatActivity() {
     private var api = Api.service
     private var call: Call<String>? = null
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
+private var progressBar: ProgressBar? = null
 
     private var fecha: String = ""
     private var carrera: Carrera? = null
@@ -42,9 +45,12 @@ class ReservasActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
+        progressBar = findView(R.id.progressBar)
 
-        mViewPager!!.adapter = mSectionsPagerAdapter
+        val mViewPager = findView<ViewPager>(R.id.mViewPager)
+        mViewPager.adapter = mSectionsPagerAdapter
 
+        val tabs = findView<TabLayout>(R.id.tabs)
         tabs.setupWithViewPager(mViewPager)
 
         async {
@@ -68,7 +74,7 @@ class ReservasActivity : AppCompatActivity() {
 
         call?.enqueue({ _, response ->
             val mReservas = response?.body() as String
-            progressBar.visibility = View.GONE
+            progressBar!!.visibility = View.GONE
             val reservas = Util.fromJson(mReservas)
             val reservasEspeciales = Util.fromJsonReservasEspeciales(mReservas)
             for (frag in supportFragmentManager.fragments) {
@@ -76,9 +82,9 @@ class ReservasActivity : AppCompatActivity() {
             }
         }, { call, _ ->
             if (!call!!.isCanceled) {
-                progressBar.visibility = View.GONE
-                Snackbar.make(main_content, getString(R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
-                        .setAction(getString(R.string.reintentar), { progressBar.visibility = View.VISIBLE; requestDist() })
+                progressBar!!.visibility = View.GONE
+                Snackbar.make(progressBar!!, getString(R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getString(R.string.reintentar), { progressBar!!.visibility = View.VISIBLE; requestDist() })
                         .show()
             }
         })

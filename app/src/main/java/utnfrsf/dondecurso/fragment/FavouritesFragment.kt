@@ -1,0 +1,77 @@
+package utnfrsf.dondecurso.fragment
+
+import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
+import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import io.paperdb.Paper
+import utnfrsf.dondecurso.R
+import utnfrsf.dondecurso.activity.FavoritoActivity
+import utnfrsf.dondecurso.common.async
+import utnfrsf.dondecurso.common.findView
+import utnfrsf.dondecurso.common.launchActivity
+import utnfrsf.dondecurso.common.onUI
+import utnfrsf.dondecurso.domain.Favorito
+
+class FavouritesFragment : Fragment() {
+
+    private var rootView: View? = null
+    private var mRecyclerView: RecyclerView? = null
+    private var fab: FloatingActionButton? = null
+
+    private var favoritos: ArrayList<Favorito> = ArrayList<Favorito>()
+
+    override fun onStart() {
+        super.onStart()
+        async {
+            favoritos = Paper.book().read("favoritos", ArrayList<Favorito>())
+            onUI { mRecyclerView?.adapter = RecyclerAdapter(favoritos) }
+        }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        rootView = inflater!!.inflate(R.layout.fragment_favourites, container, false)
+
+        mRecyclerView = rootView!!.findView<RecyclerView>(R.id.recyclerview_favoritos)
+        mRecyclerView!!.setHasFixedSize(true)
+        val mLayoutManager = LinearLayoutManager(activity)
+        mRecyclerView!!.setLayoutManager(mLayoutManager)
+
+        async {
+            favoritos = Paper.book().read("favoritos", ArrayList<Favorito>())
+            onUI { mRecyclerView?.adapter = RecyclerAdapter(favoritos) }
+        }
+
+        fab = rootView!!.findView(R.id.fab_nuevo_favorito)
+        fab!!.setOnClickListener { rootView!!.launchActivity(FavoritoActivity()) }
+
+        return rootView
+    }
+
+    internal inner class RecyclerAdapter(val mFavoritos: ArrayList<Favorito>) : RecyclerView.Adapter<ViewHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.fila_favorito, parent, false)
+            return ViewHolder(view)
+        }
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.textViewMateria.setText(mFavoritos[position].materia.nombre)
+            holder.textViewNivel.setText(mFavoritos[position].nivel.nombre)
+            holder.textViewComision.setText(mFavoritos[position].comision.nombre)
+        }
+        override fun getItemCount(): Int {
+            return mFavoritos.size
+        }
+    }
+
+    internal inner class ViewHolder(val row: View) : RecyclerView.ViewHolder(row) {
+        val textViewMateria: TextView by lazy { row.findView<TextView>(R.id.textview_materia) }
+        val textViewNivel: TextView by lazy { row.findView<TextView>(R.id.textview_nivel) }
+        val textViewComision: TextView by lazy { row.findView<TextView>(R.id.textview_comision) }
+    }
+
+}

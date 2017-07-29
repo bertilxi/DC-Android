@@ -24,6 +24,11 @@ fun Activity.launchActivity(activity: Activity) {
     startActivity(i)
 }
 
+fun View.launchActivity(activity: Activity) {
+    val i = Intent(this.context, activity::class.java)
+    this.context.startActivity(i)
+}
+
 fun <T> Call<T>.enqueue(onResponse: (call: Call<T>?, response: Response<T>?) -> Any, onFailure: (call: Call<T>?, t: Throwable?) -> Any) {
     this.enqueue(object : Callback<T> {
         override fun onResponse(call: Call<T>?, response: Response<T>?) {
@@ -36,12 +41,10 @@ fun <T> Call<T>.enqueue(onResponse: (call: Call<T>?, response: Response<T>?) -> 
     })
 }
 
-fun async(callback: () -> Any) {
-    AsyncTask.execute {
-        callback()
-    }
+fun async(callback: () -> Unit) {
+    AsyncTask.execute { callback() }
 }
 
-fun onUI(callback: () -> Any) {
+fun onUI(callback: () -> Unit) {
     Handler(Looper.getMainLooper()).post { callback() }
 }

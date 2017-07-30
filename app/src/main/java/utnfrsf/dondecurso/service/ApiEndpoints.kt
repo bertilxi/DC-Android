@@ -15,9 +15,9 @@ interface ApiEndpoints {
     @FormUrlEncoded
     @POST("getDistribucion.php")
     fun requestDistribution(@Field("fecha_inicio") fechaInicio: String,
-                            @Field("carrera") carreraID: String,
-                            @Field("nivel") nivelID: String,
-                            @Field("materia") materiaID: String,
-                            @Field("comisiones") comisionID: String): Call<String>
+                            @Field("carrera") carreraID: String?,
+                            @Field("nivel") nivelID: String?,
+                            @Field("materia") materiaID: String?,
+                            @Field("comisiones") comisionID: String?): Call<String>
 
 }

@@ -27,7 +27,7 @@ class SplashScreen : AppCompatActivity() {
             requestLoads()
             val carrera = Paper.book().read<Carrera>("carrera")
             onUI {
-                if (carrera.id <= 0) launchActivity(SetupActivity())
+                if (carrera == null || carrera.id <= 0) launchActivity(SetupActivity())
                 else launchActivity(MainActivity())
                 finish()
             }

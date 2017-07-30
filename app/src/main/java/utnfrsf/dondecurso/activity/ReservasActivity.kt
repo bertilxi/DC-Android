@@ -8,7 +8,10 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.*
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.view.*
 import android.view.animation.*
 import android.widget.ProgressBar
@@ -125,8 +128,6 @@ private var progressBar: ProgressBar? = null
 
             recyclerView?.layoutManager = LinearLayoutManager(activity.applicationContext)
             recyclerView?.itemAnimator = DefaultItemAnimator()
-            val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
-            recyclerView?.addItemDecoration(itemDecoration)
 
             //Animación
             val set = AnimationSet(true)

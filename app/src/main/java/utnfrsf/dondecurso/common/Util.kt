@@ -3,10 +3,10 @@ package utnfrsf.dondecurso.common
 import com.google.gson.internal.LinkedTreeMap
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import utnfrsf.dondecurso.domain.Comision
-import utnfrsf.dondecurso.domain.Materia
-import utnfrsf.dondecurso.domain.Reserva
-import utnfrsf.dondecurso.domain.ReservaEspecial
+import utnfrsf.dondecurso.domain.*
+import utnfrsf.dondecurso.service.Api
+import java.util.*
+import kotlin.collections.ArrayList
 
 object Util {
     fun fromJson(objects: LinkedTreeMap<String, Any>): ArrayList<Materia> {
@@ -109,6 +109,39 @@ object Util {
         }
 
         return mReservas
+    }
+
+    fun getWeek(favoritos: ArrayList<Favorito>): ArrayList<Reserva> {
+
+        val reservas: ArrayList<Reserva> = ArrayList()
+        val reservasFiltered: ArrayList<Reserva> = ArrayList()
+
+        val c = Calendar.getInstance()
+        c.time = Date()
+        val rangoSemana = IntRange(Calendar.MONDAY, Calendar.FRIDAY)
+        val diaDeHoy = c.get(Calendar.DAY_OF_WEEK)
+        val fechaDeHoy = c.get(Calendar.DATE)
+
+        if (!rangoSemana.contains(diaDeHoy)) return reservas
+
+        val api = Api.service
+        val carrera = favoritos[0].carrera
+
+        rangoSemana.forEach {
+            if (diaDeHoy >= it) {
+                val fecha = ""
+                val request = api.requestDistribution(fecha, carrera.id.toString(), null, null, null)
+                val mReservasStr = request.execute().body()
+                val mReservas = fromJson(mReservasStr)
+                reservas.addAll(mReservas)
+            }
+        }
+
+        favoritos.forEach { (carrera1) ->
+            reservasFiltered.addAll(reservas.filter { it.nombre == carrera1.nombre })
+        }
+
+        return reservasFiltered
     }
 
 }

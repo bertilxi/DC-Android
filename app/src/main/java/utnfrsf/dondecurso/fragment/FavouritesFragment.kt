@@ -30,7 +30,7 @@ class FavouritesFragment : Fragment() {
         super.onStart()
         async {
             favoritos = Paper.book().read("favoritos", ArrayList<Favorito>())
-            onUI { mRecyclerView?.adapter = RecyclerAdapter(favoritos) }
+            updateList(favoritos)
         }
     }
 
@@ -44,7 +44,7 @@ class FavouritesFragment : Fragment() {
 
         async {
             favoritos = Paper.book().read("favoritos", ArrayList<Favorito>())
-            onUI { mRecyclerView?.adapter = RecyclerAdapter(favoritos) }
+            updateList(favoritos)
         }
 
         fab = rootView!!.findView(R.id.fab_nuevo_favorito)
@@ -53,16 +53,38 @@ class FavouritesFragment : Fragment() {
         return rootView
     }
 
-    internal inner class RecyclerAdapter(val mFavoritos: ArrayList<Favorito>) : RecyclerView.Adapter<ViewHolder>() {
+    fun updateList(data: ArrayList<Favorito>) {
+        onUI { mRecyclerView?.adapter = RecyclerAdapter(data) }
+    }
+
+    internal inner class RecyclerAdapter(var mFavoritos: ArrayList<Favorito>) : RecyclerView.Adapter<ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.fila_favorito, parent, false)
             return ViewHolder(view)
         }
+
+        fun update(data: ArrayList<Favorito>) {
+            mFavoritos.clear()
+            mFavoritos.addAll(data)
+            onUI { notifyDataSetChanged() }
+        }
+
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.textViewMateria.setText(mFavoritos[position].materia.nombre)
             holder.textViewNivel.setText(mFavoritos[position].nivel.nombre)
             holder.textViewComision.setText(mFavoritos[position].comision.nombre)
+            holder.fabEliminar.setOnClickListener {
+                async {
+                    favoritos.removeAt(position)
+                    Paper.book().write("favoritos", favoritos)
+                    updateList(favoritos)
+                }
+            }
+            holder.fabBusqueda.setOnClickListener {
+
+            }
         }
+
         override fun getItemCount(): Int {
             return mFavoritos.size
         }
@@ -72,6 +94,8 @@ class FavouritesFragment : Fragment() {
         val textViewMateria: TextView by lazy { row.findView<TextView>(R.id.textview_materia) }
         val textViewNivel: TextView by lazy { row.findView<TextView>(R.id.textview_nivel) }
         val textViewComision: TextView by lazy { row.findView<TextView>(R.id.textview_comision) }
+        val fabEliminar: FloatingActionButton by lazy { row.findView<FloatingActionButton>(R.id.fab_eliminar) }
+        val fabBusqueda: FloatingActionButton by lazy { row.findView<FloatingActionButton>(R.id.fab_busqueda) }
     }
 
 }

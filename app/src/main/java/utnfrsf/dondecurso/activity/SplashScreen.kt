@@ -1,10 +1,16 @@
 package utnfrsf.dondecurso.activity
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.TextView
 import com.google.gson.internal.LinkedTreeMap
 import io.paperdb.Paper
-import utnfrsf.dondecurso.common.*
+import utnfrsf.dondecurso.R
+import utnfrsf.dondecurso.common.Util
+import utnfrsf.dondecurso.common.enqueue
+import utnfrsf.dondecurso.common.findView
 import utnfrsf.dondecurso.domain.Carrera
 import utnfrsf.dondecurso.domain.Materia
 import utnfrsf.dondecurso.domain.Nivel
@@ -20,18 +26,25 @@ class SplashScreen : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Paper.init(this)
+        setContentView(R.layout.activity_mantenimiento)
+        val textviweUrl = findView<TextView>(R.id.textviewUrlWeb)
 
-        async {
-            checkMetadata()
-            requestLoads()
-            val carrera = Paper.book().read<Carrera>("carrera")
-            onUI {
-                if (carrera == null || carrera.id <= 0) launchActivity(SetupActivity())
-                else launchActivity(MainActivity())
-                finish()
-            }
+        textviweUrl.setOnClickListener { v ->
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.urlWeb))))
         }
+
+//        Paper.init(this)
+//
+//        async {
+//            checkMetadata()
+//            requestLoads()
+//            val carrera = Paper.book().read<Carrera>("carrera")
+//            onUI {
+//                if (carrera == null || carrera.id <= 0) launchActivity(SetupActivity())
+//                else launchActivity(MainActivity())
+//                finish()
+//            }
+//        }
     }
 
     private fun requestLoads() {

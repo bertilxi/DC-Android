@@ -13,7 +13,10 @@
     <string name="debe_seleccionar_una_carrera">Debe seleccionar una carrera</string>
     <string name="error_conexion">No se ha podido conectar con el servidor</string>
     <string name="reintentar">Reintentar</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="disclaimer">
+        Lamentamos informarles que Donde Curso no funcionará debido a cambios recientes en la API
+        de la facultad, estaremos trabajando para adaptarnos a los nuevos cambios.
+        Por el momento utilizen la web de distribuciones de aula de la facultad
+    </string>
+    <string name="urlWeb">https://www.frsf.utn.edu.ar/recursos-web/distribucion-de-aulas</string>
 </resources>

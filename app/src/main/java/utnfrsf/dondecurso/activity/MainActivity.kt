@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.tab_favourite -> fragment = FavouritesFragment()
                 R.id.tab_search -> fragment = QueryFragment()
-                R.id.tab_about -> fragment = AboutFragment()
+                R.id.tab_next -> fragment = AboutFragment()
                 else -> fragment = QueryFragment()
             }
             val transaction = fragmentManager!!.beginTransaction()

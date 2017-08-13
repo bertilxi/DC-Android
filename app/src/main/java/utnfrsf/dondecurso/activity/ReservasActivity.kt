@@ -32,7 +32,7 @@ class ReservasActivity : AppCompatActivity() {
     private var api = Api.service
     private var call: Call<String>? = null
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
-private var progressBar: ProgressBar? = null
+    private var progressBar: ProgressBar? = null
 
     private var fecha: String = ""
     private var carrera: Carrera? = null

@@ -12,11 +12,14 @@ import android.widget.TextView
 import io.paperdb.Paper
 import utnfrsf.dondecurso.R
 import utnfrsf.dondecurso.activity.FavoritoActivity
+import utnfrsf.dondecurso.activity.ReservasActivity
 import utnfrsf.dondecurso.common.async
 import utnfrsf.dondecurso.common.findView
 import utnfrsf.dondecurso.common.launchActivity
 import utnfrsf.dondecurso.common.onUI
 import utnfrsf.dondecurso.domain.Favorito
+import java.text.SimpleDateFormat
+import java.util.*
 
 class FavouritesFragment : Fragment() {
 
@@ -48,7 +51,7 @@ class FavouritesFragment : Fragment() {
         }
 
         fab = rootView!!.findView(R.id.fab_nuevo_favorito)
-        fab!!.setOnClickListener { rootView!!.launchActivity(FavoritoActivity()) }
+        fab!!.setOnClickListener { activity.launchActivity(FavoritoActivity()) }
 
         return rootView
     }
@@ -81,7 +84,18 @@ class FavouritesFragment : Fragment() {
                 }
             }
             holder.fabBusqueda.setOnClickListener {
+                val fecha = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Calendar.getInstance().time)
 
+                async {
+                    Paper.book().write("fecha", fecha)
+                    Paper.book().write("carrera", mFavoritos[position].carrera)
+                    Paper.book().write("nivel", mFavoritos[position].nivel)
+                    Paper.book().write("materia", mFavoritos[position].materia)
+                    Paper.book().write("comision", mFavoritos[position].comision)
+                    onUI {
+                        activity.launchActivity(ReservasActivity())
+                    }
+                }
             }
         }
 

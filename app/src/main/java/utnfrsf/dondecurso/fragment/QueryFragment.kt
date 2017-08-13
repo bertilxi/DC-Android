@@ -113,9 +113,11 @@ class QueryFragment : Fragment() {
             materias.addAll(Util.fromJson(mMaterias))
             processSubjectsLoad()
         }, { _, _ ->
-            Snackbar.make(rootView!!, getString(utnfrsf.dondecurso.R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
-                    .setAction(getString(utnfrsf.dondecurso.R.string.reintentar), { requestLoads() })
-                    .show()
+            if (isAdded) {
+                Snackbar.make(rootView!!, getString(utnfrsf.dondecurso.R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getString(utnfrsf.dondecurso.R.string.reintentar), { requestLoads() })
+                        .show()
+            }
         })
     }
 

@@ -8,9 +8,7 @@ import android.widget.TextView
 import com.google.gson.internal.LinkedTreeMap
 import io.paperdb.Paper
 import utnfrsf.dondecurso.R
-import utnfrsf.dondecurso.common.Util
-import utnfrsf.dondecurso.common.enqueue
-import utnfrsf.dondecurso.common.findView
+import utnfrsf.dondecurso.common.*
 import utnfrsf.dondecurso.domain.Carrera
 import utnfrsf.dondecurso.domain.Materia
 import utnfrsf.dondecurso.domain.Nivel

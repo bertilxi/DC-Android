@@ -36,8 +36,13 @@
         <activity
             android:name=".activity.SetupActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+            <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="utnfrsf.dondecurso.activity.MainActivity" />
         <activity
             android:name=".activity.FavoritoActivity"
+            android:label="@string/title_activity_favorito"
+            android:parentActivityName=".activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

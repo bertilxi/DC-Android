@@ -8,6 +8,7 @@
     <string name="materia">Materia</string>
     <string name="nivel">Nivel</string>
     <string name="title_activity_reservas">Reservas</string>
+    <string name="title_activity_favorito">Mis Materias</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="debe_seleccionar_una_carrera">Debe seleccionar una carrera</string>

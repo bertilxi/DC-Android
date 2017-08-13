@@ -5,6 +5,7 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import utnfrsf.dondecurso.R
 import utnfrsf.dondecurso.common.findView
 import utnfrsf.dondecurso.fragment.AboutFragment
@@ -20,6 +21,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(utnfrsf.dondecurso.R.layout.activity_main)
 
+        val toolbar = findView<Toolbar>(R.id.toolbar_main)
+        setSupportActionBar(toolbar)
         fragmentManager = supportFragmentManager
         val bottomMenu = findView<BottomNavigationView>(R.id.bottomMenu)
 

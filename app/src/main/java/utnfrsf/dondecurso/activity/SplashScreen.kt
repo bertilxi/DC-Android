@@ -36,8 +36,9 @@ class SplashScreen : AppCompatActivity() {
                 materias.addAll(Util.fromJson(mMaterias))
                 Paper.book().write("materias", materias)
                 onUI {
-                    if (carrera == null || carrera.id <= 0) launchActivity(SetupActivity())
-                    else launchActivity(MainActivity())
+                    // if (carrera == null || carrera.id <= 0) launchActivity(SetupActivity())
+                    //else launchActivity(MainActivity())
+                    launchActivity(MainActivity())
                     finish()
                 }
             }, { _, _ ->

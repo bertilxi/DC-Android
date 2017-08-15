@@ -45,6 +45,7 @@
     </FrameLayout>
 
     <android.support.design.widget.BottomNavigationView
+        android:visibility="gone"
         android:id="@+id/bottomMenu"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

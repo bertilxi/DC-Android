@@ -24,46 +24,43 @@ class SplashScreen : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_mantenimiento)
-        val textviweUrl = findView<TextView>(R.id.textviewUrlWeb)
 
-        textviweUrl.setOnClickListener { v ->
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.urlWeb))))
+        Paper.init(this)
+
+        async {
+            checkMetadata()
+            val carrera = Paper.book().read<Carrera>("carrera")
+            api.loadSubjects().enqueue({ _, response ->
+                materias.clear()
+                val mMaterias = response?.body() as LinkedTreeMap<String, Any>
+                materias.addAll(Util.fromJson(mMaterias))
+                Paper.book().write("materias", materias)
+                onUI {
+                    if (carrera == null || carrera.id <= 0) launchActivity(SetupActivity())
+                    else launchActivity(MainActivity())
+                    finish()
+                }
+            }, { _, _ ->
+                onUI {
+                    setContentView(R.layout.activity_mantenimiento)
+                    val textviweUrl = findView<TextView>(R.id.textviewUrlWeb)
+
+                    textviweUrl.setOnClickListener { v ->
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.urlWeb))))
+                    }
+                }
+            })
+
         }
 
-//        Paper.init(this)
-//
-//        async {
-//            checkMetadata()
-//            requestLoads()
-//            val carrera = Paper.book().read<Carrera>("carrera")
-//            onUI {
-//                if (carrera == null || carrera.id <= 0) launchActivity(SetupActivity())
-//                else launchActivity(MainActivity())
-//                finish()
-//            }
-//        }
     }
 
-    private fun requestLoads() {
-        api.loadSubjects().enqueue({ _, response ->
-            materias.clear()
-            val mMaterias = response?.body() as LinkedTreeMap<String, Any>
-            materias.addAll(Util.fromJson(mMaterias))
-            Paper.book().write("materias", materias)
-        }, { _, _ ->
-//            Snackbar.make(this@SplashScreen, getString(utnfrsf.dondecurso.R.string.error_conexion), Snackbar.LENGTH_INDEFINITE)
-//                    .setAction(getString(utnfrsf.dondecurso.R.string.reintentar), { requestLoads() })
-//                    .show()
-        })
-    }
-
-    fun checkMetadata(){
+    private fun checkMetadata() {
 
         carreras = Paper.book().read("carreras", ArrayList<Carrera>())
         niveles = Paper.book().read("niveles", ArrayList<Nivel>())
 
-        if(!carreras.isEmpty() && !niveles.isEmpty()) return
+        if (!carreras.isEmpty() && !niveles.isEmpty()) return
 
         carreras.add(Carrera(0, "Seleccione una carrera"))
         carreras.add(Carrera(1, "Ingeniería en Sistemas"))

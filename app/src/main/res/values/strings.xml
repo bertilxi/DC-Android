@@ -15,9 +15,7 @@
     <string name="error_conexion">No se ha podido conectar con el servidor</string>
     <string name="reintentar">Reintentar</string>
     <string name="disclaimer">
-        Lamentamos informarles que Donde Curso no funcionará debido a cambios recientes en la API
-        de la facultad, estaremos trabajando para adaptarnos a los nuevos cambios.
-        Por el momento utilizen la web de distribuciones de aula de la facultad
+        Servicio no disponible, por favor pruebe con el sistema web de distribución de aulas
     </string>
     <string name="urlWeb">https://www.frsf.utn.edu.ar/recursos-web/distribucion-de-aulas</string>
 </resources>

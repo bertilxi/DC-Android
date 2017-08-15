@@ -36,21 +36,22 @@ class SetupActivity : AppCompatActivity() {
 
     }
 
-    fun setupView(){
+    fun setupView() {
         adapter = MyArrayAdapter(this@SetupActivity, R.layout.spinner_item, carreras, false)
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 carrera = null
             }
+
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 carrera = carreras[position]
-                if(carrera!!.id == 0) carrera = null
+                if (carrera!!.id == 0) carrera = null
             }
         }
 
         fab.setOnClickListener {
-            if(carrera == null) {
+            if (carrera == null) {
                 textViewError.visibility = View.VISIBLE
                 textViewError.text = ""
                 textViewError.error = "Seleccione una carrera por favor"

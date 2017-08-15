@@ -57,7 +57,7 @@ class FavoritoActivity : AppCompatActivity() {
         }
     }
 
-    fun setupView(){
+    fun setupView() {
         adapterNivel = MyArrayAdapter(this@FavoritoActivity, R.layout.spinner_item_dark, niveles, true)
         adapterComision = MyArrayAdapter(this@FavoritoActivity, R.layout.spinner_item_dark, comisiones, true)
         adapterMateria = MyArrayAdapter(this@FavoritoActivity, R.layout.spinner_item_dark, filteredMaterias, true)
@@ -100,9 +100,9 @@ class FavoritoActivity : AppCompatActivity() {
 
         fab.setOnClickListener {
 
-            if(nivel == null) return@setOnClickListener
-            if(materia == null) return@setOnClickListener
-            if(comision == null) return@setOnClickListener
+            if (nivel == null) return@setOnClickListener
+            if (materia == null) return@setOnClickListener
+            if (comision == null) return@setOnClickListener
 
             async {
                 val favorito = Favorito(carrera!!, nivel!!, materia!!, comision!!)

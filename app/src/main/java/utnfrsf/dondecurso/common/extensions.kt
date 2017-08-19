@@ -12,11 +12,11 @@ import retrofit2.Response
 
 
 fun <T> Activity.findView(id: Int): T {
-    return this.findViewById(id) as T
+    return this.findViewById<View>(id) as T
 }
 
 fun <T> View.findView(id: Int): T {
-    return this.findViewById(id) as T
+    return this.findViewById<View>(id) as T
 }
 
 fun Activity.launchActivity(activity: Activity) {

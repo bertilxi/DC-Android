@@ -18,4 +18,7 @@
         Servicio no disponible, por favor pruebe con el sistema web de distribución de aulas
     </string>
     <string name="urlWeb">https://www.frsf.utn.edu.ar/recursos-web/distribucion-de-aulas</string>
+    <string name="mis_materias">Mis Materias</string>
+    <string name="pr_ximas">Próximas</string>
+    <string name="b_squeda">Búsqueda</string>
 </resources>
